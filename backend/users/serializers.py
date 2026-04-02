@@ -15,6 +15,7 @@ class UserCreateSerializer(PasswordValidationMixin, serializers.ModelSerializer)
             "password",
             "verify_password",
             "email",
+            "date_of_birth",
             "phone_number",
             "first_name",
             "last_name",
