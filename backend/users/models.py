@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -42,3 +43,22 @@ class User(AbstractUser):
     username = None
     
     objects = CustomUserManager()
+    
+    
+class UserAddress(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="addresses"
+    )
+    city = models.CharField(max_length=50, blank=False, null=False)
+    country = CountryField(blank=False, null=False)
+    address_line1 = models.CharField(max_length=150, blank=False, null=False)
+    postal_code = models.CharField(max_length=20, blank=False, null=False)
+    is_default = models.BooleanField(default=True)
+    
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            UserAddress.objects.filter(user=self.user).exclude(pk=self.pk).update(is_default=False)
+            
+        super().save(*args, **kwargs)
