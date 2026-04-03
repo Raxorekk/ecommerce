@@ -20,6 +20,13 @@ class CreateUserView(CreateAPIView):
     permission_classes = [AllowAny]
     
     
-class UserAddressesViewSet(ModelViewSet):
+class UserAddressViewSet(ModelViewSet):
     queryset = models.UserAddress.objects.all()
+    serializer_class = serializers.UserAddressSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["user"] = self.request.user
+        
+        return context

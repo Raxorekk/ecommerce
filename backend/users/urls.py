@@ -5,6 +5,7 @@ from users import views
 
 router = routers.DefaultRouter()
 router.register("all", views.AdminUserViewSet, basename="all-users")
+router.register("addresses", views.UserAddressViewSet, basename="addresses")
 
 urlpatterns = [
     path("create-account", views.CreateUserView.as_view(), name="create-account"),
