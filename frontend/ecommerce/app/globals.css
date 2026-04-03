@@ -1,26 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 @import "tailwindcss";
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: hsl(220 20% 7%);
+  --foreground: hsl(210 20% 92%);
+  --primary-foreground: hsl(220 20% 7%);
+  --muted-foreground: hsl(215 12% 50%);
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-light-blue: #0DA2E7;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
+*/
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space);
+    color: var(--foreground);
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+
+  }
 }
+
+@layer components {
+  .blue-button {
+    @apply w-10 py-3.5 bg-light-blue;
+  }
+}
+
+
