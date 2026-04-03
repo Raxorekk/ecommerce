@@ -8,6 +8,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+class AdminUserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = serializers.AdminMeUserSerializer
+    permission_classes = [IsAdminUser]
+
+
 class CreateUserView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserCreateSerializer

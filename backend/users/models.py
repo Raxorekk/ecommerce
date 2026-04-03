@@ -49,7 +49,9 @@ class UserAddress(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="addresses"
+        related_name="addresses",
+        null=True,
+        blank=True
     )
     city = models.CharField(max_length=50, blank=False, null=False)
     country = CountryField(blank=False, null=False)

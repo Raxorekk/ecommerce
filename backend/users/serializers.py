@@ -31,7 +31,7 @@ class UserCreateSerializer(PasswordValidationMixin, serializers.ModelSerializer)
         return user
     
 
-class UserAddressesSerializer(serializers.ModelSerializer):
+class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserAddress
         fields = [
@@ -39,5 +39,22 @@ class UserAddressesSerializer(serializers.ModelSerializer):
             "city",
             "country",
             "address_line1",
+            "postal_code",
             "is_default",
+        ]
+        
+        
+class AdminMeUserSerializer(serializers.ModelSerializer):
+    addresses = UserAddressSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "date_of_birth",
+            "phone_number",
+            "first_name",
+            "last_name",
+            "addresses"
         ]
