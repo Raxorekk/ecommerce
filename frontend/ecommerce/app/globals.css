@@ -50,7 +50,7 @@
   }
   
   .auth-input {
-    @apply rounded-md bg-muted-background placeholder:text-muted-foreground px-4 py-3 text-sm outline-none focus:border-light-blue;
+    @apply rounded-md bg-muted-background placeholder:text-muted-foreground px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-light-blue;
   }
   .auth-label {
     @apply text-muted-foreground mb-1 text-sm tracking-wider uppercase font-body;

@@ -1,8 +1,14 @@
 "use client";
 import { handleAuth } from "@/app/actions/auth";
+import { useFormStatus } from "react-dom";
 
-export default function AuthForm({ type }: { type: "login" | "register" }) {
-  const actionWithVariant = handleAuth.bind(null, type);
+
+interface AuthType {
+  authType: "login" | "register";
+}
+
+export default function AuthForm({ authType }: AuthType) {
+  const actionWithVariant = handleAuth.bind(null, authType);
 
   return (
     <form
@@ -27,7 +33,7 @@ export default function AuthForm({ type }: { type: "login" | "register" }) {
           placeholder="••••••••"
         />
       </div>
-      {type === "register" && (
+      {authType === "register" && (
         <>
           <div className="flex flex-col">
             <label className="auth-label">PASSWORD CONFIRMATION</label>
@@ -76,12 +82,21 @@ export default function AuthForm({ type }: { type: "login" | "register" }) {
           </div>
         </>
       )}
-      <button
-        className="w-full font-semibold text-sm text-primary-foreground uppercase tracking-wider blue-button"
-        type="submit"
-      >
-        {type === "login" ? "SIGN IN" : "CREATE ACCOUNT"}
-      </button>
+      <SubmitButton authType={authType} />
     </form>
+  );
+}
+
+function SubmitButton({ authType }: AuthType) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className="w-full font-semibold text-sm text-primary-foreground uppercase tracking-wider blue-button disabled:opacity-60"
+      type="submit"
+      disabled={pending}
+    >
+      {authType === "login" ? "SIGN IN" : "CREATE ACCOUNT"}
+    </button>
   );
 }
