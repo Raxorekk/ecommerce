@@ -35,8 +35,9 @@ export async function apiFetch<T>(
   });
 
   if (!response.ok) {
-    // clear token if unauthorized in case of invalid access_token
+    // clear token if unauthorized in case of invalid accessToken
     if (response.status === 401 && !isRetry) {
+      // fetch refreshToken and set if available
       const refreshToken = cookieStore.get("REFRESH_TOKEN")?.value;
       if (refreshToken) {
         const refreshResponse = await fetch(
@@ -50,11 +51,12 @@ export async function apiFetch<T>(
           },
         );
 
-        const data = (await refreshResponse.json()) as { access: string };
-
+        
         if (refreshResponse.ok) {
+          // set new accessToken or retry request
+          const data = (await refreshResponse.json()) as { access: string };
           if (data?.access) {
-            cookieStore.set("ACCESS_TOKEN", data?.access, {
+            cookieStore.set("ACCESS_TOKEN", data.access, {
               httpOnly: true,
               secure: process.env.NODE_ENV === "production",
               path: "/",
@@ -67,6 +69,7 @@ export async function apiFetch<T>(
           }
         }
       }
+      // delete tokens and redirect to login if no refreshToken
       cookieStore.delete("ACCESS_TOKEN");
       cookieStore.delete("REFRESH_TOKEN");
       redirect("/login");

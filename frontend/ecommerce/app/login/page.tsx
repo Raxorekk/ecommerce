@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen px-6 pt-20">
+    <div className="flex flex-col items-center min-h-222 px-6 justify-center animate-fade-in [animation-duration:300ms]">
       <div className="flex flex-col items-center max-w-sm w-full">
         <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
         <p className="text-muted-foreground text-sm mb-10 text-center">

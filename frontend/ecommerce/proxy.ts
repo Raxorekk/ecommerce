@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "./lib/routes";
 import { cookies } from "next/headers";
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
     path.startsWith(route),
