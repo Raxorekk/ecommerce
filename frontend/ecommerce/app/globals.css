@@ -4,10 +4,12 @@
 
 :root {
   --background: hsl(220 20% 7%);
-  --muted-background: hsl(217, 14%, 18%);
+  --muted-background: hsl(220, 16%, 14%);
   --foreground: hsl(210 20% 92%);
   --primary-foreground: hsl(220 20% 7%);
+  --muted: hsl(220 14% 16%);
   --muted-foreground: hsl(215 12% 50%);
+  --secondary-foreground: hsl(210 20% 85%);
 }
 
 @theme {
@@ -15,17 +17,31 @@
   --color-muted-background: var(--muted-background);
   --color-foreground: var(--foreground);
   --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-light-blue: #0DA2E7;
   --font-space: "Space Grotesk", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
   --shadow-glow-cyan: 0 0 20px #0da2e726, 0 0 60px #0da2e70d;
-  --animate-fade-in: fade-in ease-out forwards;
+  --animate-fade-in-down: fade-in-down ease-out forwards;
+  --animate-fade-in-up: fade-in-up ease-out forwards;
 
-  @keyframes fade-in {
+  @keyframes fade-in-down {
     from {
       opacity: 0;
       transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
     }
     to {
       opacity: 1;

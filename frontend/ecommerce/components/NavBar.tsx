@@ -60,9 +60,9 @@ export default function NavBar() {
 
   return (
     <nav className="fixed left-0 top-0 right-0 flex z-50 h-16 lg:h-20 bg-background/80 border-b border-muted-background backdrop-blur-md">
-      <div className="container mx-auto flex flex-row items-center justify-between py-4 px-6 lg:px-12">
+      <div className="w-full max-w-350 mx-auto flex flex-row items-center justify-between px-6 lg:px-12">
         <Link href="/" className="font-space text-xl font-bold tracking-tight lg:text-2xl">
-          <span className="">
+          <span>
             PC
           </span>
           <span className="text-light-blue">
@@ -93,7 +93,7 @@ export default function NavBar() {
         </div>
       </div>
       {showDropdown && (
-        <div className="md:hidden fixed flex flex-col left-0 top-15 w-full gap-1 bg-background py-4 px-6 border-b border-b-muted-background shadow-2xl animate-fade-in [animation-duration:200ms]">
+        <div className="md:hidden fixed flex flex-col left-0 top-15 w-full gap-1 bg-background py-4 px-6 border-b border-b-muted-background shadow-2xl animate-fade-in-down [animation-duration:200ms]">
           <NavBarDropdownButton href="/" Icon={Monitor} text="Shop" />
           <NavBarDropdownButton href="/" Icon={Cpu} text="Builds" />
           <NavBarDropdownButton href="/" Icon={Tag} text="Deals" />

@@ -39,6 +39,7 @@ export async function apiFetch<T>(
     if (response.status === 401 && !isRetry) {
       // fetch refreshToken and set if available
       const refreshToken = cookieStore.get("REFRESH_TOKEN")?.value;
+      console.log(refreshToken)
       if (refreshToken) {
         const refreshResponse = await fetch(
           `${process.env.API_URL}/users/token/refresh/`,
@@ -64,7 +65,7 @@ export async function apiFetch<T>(
               // 24 hours
               maxAge: 60 * 60 * 24,
             });
-
+            
             return apiFetch<T>(endpoint, options, true);
           }
         }
@@ -72,7 +73,7 @@ export async function apiFetch<T>(
       // delete tokens and redirect to login if no refreshToken
       cookieStore.delete("ACCESS_TOKEN");
       cookieStore.delete("REFRESH_TOKEN");
-      redirect("/login");
+      
     }
 
     // throw error, return {payload: null} if there is no body in response

@@ -62,7 +62,7 @@ export async function handleAuth(
     }
   } catch (error) {
     if (error instanceof ApiError) {
-      console.error(`Error status: ${error.status}`, error.payload);
+      console.log(`Error status: ${error.status}`, error.payload);
       return;
     }
     return;
