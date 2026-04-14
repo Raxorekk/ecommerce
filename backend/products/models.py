@@ -15,6 +15,8 @@ class Category(models.Model):
             self.slug = generate_unique_slug(self.name, Category, self.pk)
         super().save(*args, **kwargs)
     
+    def __str__(self):
+        return f'{self.name}'
 
 class Specification(models.Model):
     TEXT = 'TEXT'
@@ -33,6 +35,9 @@ class Specification(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['name', 'category'], name='unique_specification_per_category')
         ]
+        
+    def __str__(self):
+        return f'{self.name}, category: {self.category}'
 
 
 class Product(models.Model):
@@ -49,6 +54,9 @@ class Product(models.Model):
             self.slug = generate_unique_slug(self.name, Product, self.pk)
                     
         super().save(*args, **kwargs)
+        
+    def __str__(self):
+        return f'{self.name}'
 
 
 class ProductSpecificationValue(models.Model):
@@ -60,6 +68,9 @@ class ProductSpecificationValue(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['specification', 'product'], name='unique_specification_per_product')
         ]
+        
+    def __str__(self):
+        return f'{self.specification.name}: {self.value}'
         
 
 class Review(models.Model):
