@@ -10,6 +10,8 @@
   --muted: hsl(220 14% 16%);
   --muted-foreground: hsl(215 12% 50%);
   --secondary-foreground: hsl(210 20% 85%);
+  --card: hsl(220 18% 10%);
+  --card-foreground: hsl(210 20% 92%);
 }
 
 @theme {
@@ -20,6 +22,8 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-light-blue: #0DA2E7;
   --font-space: "Space Grotesk", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
@@ -46,6 +50,15 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+    @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 }
@@ -82,5 +95,9 @@
   }
   .auth-label {
     @apply text-muted-foreground mb-1 text-sm tracking-wider uppercase font-body;
+  }
+
+  .card {
+    @apply px-4 py-2.5 bg-card rounded-md border border-muted-background;
   }
 }

@@ -72,7 +72,7 @@ export default function AuthForm({ authType }: AuthType) {
             />
           </div>
           <div className="flex flex-col">
-            <label className="auth-label">LAST NAME </label>
+            <label className="auth-label">LAST NAME</label>
             <input
               className="w-full auth-input placeholder:text-sm"
               type="text"

@@ -5,7 +5,7 @@ from . import models
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
-        fields = ["name", "slug"]
+        fields = ["name", "slug", "emoji"]
         
 
 class SpecificationSerializer(serializers.ModelSerializer):

@@ -13,29 +13,35 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { Category } from "@/types/api";
 
 function NavBarDropdownButton({
+  setShowDropdown,
   href,
   text,
   Icon,
+  emoji
 }: {
+  setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
   href: string;
   text: string;
-  Icon: React.ForwardRefExoticComponent<
+  Icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
+  emoji?: string;
 }) {
   return (
     <Link
-      className="flex flex-row items-center gap-2 font-semibold text-sm p-3 rounded-lg hover:text-light-blue hover:bg-light-blue/5 transition-all transition-duration-150 ease-in-out"
+      onClick={() => setShowDropdown(false)}
+      className="flex flex-row items-center font-semibold text-sm p-3 rounded-lg hover:text-light-blue hover:bg-light-blue/5 transition-all transition-duration-150 ease-in-out"
       href={href}
     >
-      <Icon className="text-light-blue w-4 h-4" /> {text}
+      {Icon && <Icon className="text-light-blue w-4.5 h-4.5 ml-0.5 mr-3" />}{emoji && <span className="text-base mr-2">{emoji}</span>} {text}
     </Link>
   );
 }
 
-export default function NavBar() {
+export default function NavBar({categories}: {categories: Category[] | undefined}) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
@@ -94,12 +100,18 @@ export default function NavBar() {
       </div>
       {showDropdown && (
         <div className="md:hidden fixed flex flex-col left-0 top-15 w-full gap-1 bg-background py-4 px-6 border-b border-b-muted-background shadow-2xl animate-fade-in-down [animation-duration:200ms]">
-          <NavBarDropdownButton href="/" Icon={Monitor} text="Shop" />
-          <NavBarDropdownButton href="/" Icon={Cpu} text="Builds" />
-          <NavBarDropdownButton href="/" Icon={Tag} text="Deals" />
-          <NavBarDropdownButton href="/" Icon={LucideLifeBuoy} text="Support" />
+          {categories?.map(category => {
+            return (
+              <NavBarDropdownButton setShowDropdown={setShowDropdown} key={category.slug} href={`/products/categories/${category.slug}`} emoji={category.emoji} text={category.name} />
+            )
+          })}
           <div className="h-px bg-muted-background my-2"></div>
-          <NavBarDropdownButton href="/" Icon={User} text="Account" />
+          <NavBarDropdownButton setShowDropdown={setShowDropdown} href="/" Icon={Monitor} text="Shop" />
+          <NavBarDropdownButton setShowDropdown={setShowDropdown} href="/" Icon={Cpu} text="Builds" />
+          <NavBarDropdownButton setShowDropdown={setShowDropdown} href="/" Icon={Tag} text="Deals" />
+          <NavBarDropdownButton setShowDropdown={setShowDropdown} href="/" Icon={LucideLifeBuoy} text="Support" />
+          <div className="h-px bg-muted-background my-2"></div>
+          <NavBarDropdownButton setShowDropdown={setShowDropdown} href="/" Icon={User} text="Account" />
         </div>
       )}
     </nav>

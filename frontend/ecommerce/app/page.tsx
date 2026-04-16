@@ -32,7 +32,9 @@ export default function Home() {
                   SHOP NOW
                   <ArrowRight className="h-4 w-4" />
                 </button>
-                <button className="py-4 px-8 font-semibold font-body text-secondary-foreground text-sm tracking-wider rounded-md bg-muted-background border border-muted-background cursor-pointer hover:bg-muted transition-colors">CUSTOM BUILDS</button>
+                <button className="py-4 px-8 font-semibold font-body text-secondary-foreground text-sm tracking-wider rounded-md bg-muted-background border border-muted-background cursor-pointer hover:bg-muted transition-colors">
+                  CUSTOM BUILDS
+                </button>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ from .utils import generate_unique_slug
 class Category(models.Model):
     name = models.CharField(max_length=150, blank=False, null=False, unique=True)
     slug = models.SlugField(unique=True, blank=True)
+    emoji = models.CharField(max_length=6, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
