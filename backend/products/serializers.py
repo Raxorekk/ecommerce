@@ -1,29 +1,55 @@
 from rest_framework import serializers
 from . import models
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Category
-        fields = ["name", "slug", "emoji"]
         
-
+        
 class SpecificationSerializer(serializers.ModelSerializer):
+    values = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Specification
-        fields = ["id", "name", "category", "type"]
+        fields = ["name", "type", "slug", "values"]
         
+    def get_values(self, obj):
+        return models.ProductSpecificationValue.objects.select_related("specification") \
+            .filter(specification=obj) \
+            .values_list('value', flat=True) \
+            .distinct()
+
 
 class SpecificationValueSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='specification.name')
+    slug = serializers.CharField(source="specification.slug")
     
     class Meta:
         model = models.ProductSpecificationValue
-        fields = ["name", "value"]
+        fields = ["name", "slug", "value"]
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    specifications = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = models.Category
+        fields = ["name", "slug", "emoji", "specifications"]
+        
+    def get_specifications(self, obj):
+        return SpecificationSerializer(
+            models.Specification.objects.prefetch_related("specification_values") 
+            .select_related("category") 
+            .filter(category=obj) 
+            .distinct(), 
+            many=True 
+        ).data
+        
+
+class CategoryLightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = ["name", "slug", "emoji"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    category = CategoryLightSerializer()
     specification_values = SpecificationValueSerializer(many=True)
     
     class Meta:

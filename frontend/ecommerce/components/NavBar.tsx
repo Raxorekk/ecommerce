@@ -66,7 +66,7 @@ export default function NavBar({categories}: {categories: Category[] | undefined
 
   return (
     <nav className="fixed left-0 top-0 right-0 flex z-50 h-16 lg:h-20 bg-background/80 border-b border-muted-background backdrop-blur-md">
-      <div className="w-full max-w-350 mx-auto flex flex-row items-center justify-between px-6 lg:px-12">
+      <div className="custom-container inline-padding mx-auto flex flex-row items-center justify-between">
         <Link href="/" className="font-space text-xl font-bold tracking-tight lg:text-2xl">
           <span>
             PC

@@ -3,7 +3,7 @@ import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-export default function FilterSortButtons() {
+export default function SearchSortButtons() {
   const router = useRouter();
   const sortingOptions = [
     { name: "Featured", value: "" },
@@ -18,7 +18,7 @@ export default function FilterSortButtons() {
   );
 
   return (
-    <div className="flex flex-row mt-4 items-center gap-3">
+    <div className="flex flex-row mt-4 mb-8 items-center gap-3">
       <div className="relative">
         <Search className="absolute left-5 top-1/2 -translate-1/2 w-4 h-4 text-muted-foreground" />
         <input

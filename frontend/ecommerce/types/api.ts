@@ -2,12 +2,17 @@ export type Category = {
   name: string;
   slug: string;
   emoji: string;
+  specifications: {
+    name: string;
+    type: string;
+    values: string[];
+  }[];
 };
 
 export type SpecificationValues = {
   name: string;
   value: string;
-}
+};
 
 export type Product = {
   id: number;

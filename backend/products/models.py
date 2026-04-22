@@ -19,6 +19,7 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+
 class Specification(models.Model):
     TEXT = 'TEXT'
     NUMBER = 'NUMBER'
@@ -31,6 +32,13 @@ class Specification(models.Model):
     name = models.CharField(max_length=150, blank=False, null=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='specifications', blank=True, null=True)
     type = models.CharField(max_length=15, choices=TYPE_CHOICES, default=TEXT)
+    slug = models.SlugField(blank=True, unique=True)
+        
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self.name, Specification, self.pk)
+                    
+        super().save(*args, **kwargs)
     
     class Meta:
         constraints = [
