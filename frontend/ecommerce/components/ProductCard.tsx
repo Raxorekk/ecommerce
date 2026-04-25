@@ -7,7 +7,6 @@ import React from "react";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const pathname = usePathname();
-  console.log(pathname)
   return (
     <Link
       key={product.id}

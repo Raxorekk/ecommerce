@@ -44,7 +44,7 @@ const page = async ({
   }
 
   if (category_slug) urlSearchParams.append("category__slug", category_slug);
-
+  console.log(urlSearchParams.toString())
   const productsPromise = apiFetch<PaginatedProductResponse>(
     `api/products/?${urlSearchParams.toString()}`,
     {

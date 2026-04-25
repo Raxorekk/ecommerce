@@ -6,6 +6,7 @@ export type Category = {
     name: string;
     type: string;
     values: string[];
+    slug: string;
   }[];
 };
 

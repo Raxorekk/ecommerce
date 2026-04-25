@@ -17,7 +17,7 @@ export default function Home() {
         <div className="h-full pb-16 lg:pb-24 flex items-end">
           <div className="w-full mx-auto max-w-350 px-6 lg:px-12 ">
             <div className="max-w-xl animate-fade-in-up [animation-duration:500ms]">
-              <p className="text-light-blue text-sm tracking-widest mb-3">
+              <p className="text-light-blue font-medium text-sm tracking-widest mb-3">
                 NEW SEASON GEAR
               </p>
               <h1 className="text-4xl lg:text-6xl font-bold mb-4">

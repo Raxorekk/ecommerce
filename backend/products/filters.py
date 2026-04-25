@@ -1,19 +1,18 @@
 import django_filters
 from . import models
-import json
 
 class ProductFilter(django_filters.FilterSet):
-
     def filter_queryset(self, queryset):
-        super().filter_queryset(queryset)
+        queryset = super().filter_queryset(queryset)
         
-        
-        for key, value in dict(self.data).items():
-            print(key, value)
-            if key in self.Meta.fields:
+        # specification values filtering
+        for key in self.data.keys():
+            print(key)
+            if key in self.filters.keys() or key in ['ordering', 'page']:
                 continue
+            queryset = queryset.filter(specification_values__specification__slug=key, specification_values__value__in=self.data.getlist(key))
         
-        return queryset
+        return queryset.distinct()
     
     class Meta:
         model = models.Product
