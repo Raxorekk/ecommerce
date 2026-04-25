@@ -1,10 +1,16 @@
 "use client";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import Link from "next/link";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function SearchSortButtons() {
-  const router = useRouter();
+  const router = useRouter(); 
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  const currentSortingValue = params.get("ordering");
+  const pathName = usePathname();
   const sortingOptions = [
     { name: "Featured", value: "" },
     { name: "Price: Low → High", value: "price" },
@@ -17,6 +23,29 @@ export default function SearchSortButtons() {
     sortingOptions[0],
   );
 
+  useEffect(() => {
+    sortingOptions.forEach(el => {
+      if(el.value === currentSortingValue) {
+        setSelectedSortingOption(el);
+      }
+    })
+  }, [currentSortingValue])
+
+  const debounced = useDebouncedCallback((value: string) => {
+    handleSearch(value)
+  }, 1000)
+
+  const handleSearch = (e: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if(e) {
+      params.set("search", e)
+    }else{
+      params.delete("search")
+    }
+
+    router.push(`${pathName}/?${params}`)
+  }
+
   return (
     <div className="flex flex-row mt-4 mb-8 items-center gap-3">
       <div className="relative">
@@ -26,6 +55,7 @@ export default function SearchSortButtons() {
           className="w-44 sm:w-56 card pr-4 pl-9 text-sm placeholder:text-sm placeholder:text-muted-foreground focus:outline-none focus:border-light-blue/50 transition-colors"
           type="text"
           placeholder="Search products..."
+          onChange={(e) => debounced(e.target.value)}
         />
       </div>
 
@@ -42,17 +72,15 @@ export default function SearchSortButtons() {
 
         <div className="absolute opacity-0 invisible group-hover:visible group-hover:opacity-100 z-30 shadow-xl mt-1 right-0 top-full flex flex-col rounded-lg w-48 items-start card px-0 py-0 transition-all">
           {sortingOptions.map((s) => {
+            params.set("ordering", s.value);
             return (
-              <button
+              <Link
+                href={`${pathName}/?${params}`}
                 className={`block cursor-pointer w-full card border-none rounded-none first:rounded-t-lg last:rounded-b-lg text-left text-sm  transition-colors ${selectedSortingOption.value === s.value ? "bg-light-blue/10 text-light-blue" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 key={s.value}
-                onClick={() => {
-                  setSelectedSortingOption(s);
-                  router.push(`?ordering=${s.value}`)
-                }}
               >
                 {s.name}
-              </button>
+              </Link>
             );
           })}
         </div>

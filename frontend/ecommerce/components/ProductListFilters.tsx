@@ -36,7 +36,7 @@ const ProductListFilters = ({
                 }
               });
 
-              !isActive && params.append(spec.slug, value);
+              !isActive && params.set(spec.slug, value);
 
               return (
                 <Link

@@ -26,7 +26,6 @@ const page = async ({
   params: Promise<{ category_slug: string }>;
 }) => {
   const filters = await searchParams;
-  //console.log(filters);
   const { category_slug } = await params;
   let urlSearchParams = new URLSearchParams();
 
@@ -44,7 +43,7 @@ const page = async ({
   }
 
   if (category_slug) urlSearchParams.append("category__slug", category_slug);
-  console.log(urlSearchParams.toString())
+
   const productsPromise = apiFetch<PaginatedProductResponse>(
     `api/products/?${urlSearchParams.toString()}`,
     {
@@ -62,7 +61,7 @@ const page = async ({
       method: "GET",
       next: {
         tags: [`categories`],
-        revalidate: 1,
+        revalidate: 3600,
       },
     },
   ).then((categories_res) => categories_res?.results);
@@ -102,7 +101,8 @@ const page = async ({
                 {selected_category?.name}
               </h1>
               <span className="text-sm text-muted-foreground">
-                {products_res?.count} products
+                {products_res?.count}{" "}
+                {products_res?.count !== 1 ? "products" : "product"}
               </span>
             </div>
             <SearchSortButtons />
@@ -113,7 +113,8 @@ const page = async ({
               {selected_category?.name}
             </h1>
             <span className="text-sm text-muted-foreground">
-              {products_res?.count} products
+              {products_res?.count}{" "}
+              {products_res?.count !== 1 ? "products" : "product"}
             </span>
           </div>
           <div className="md:hidden block">
@@ -130,8 +131,9 @@ const page = async ({
 
           <div className="lg:flex flex-row gap-8 hidden">
             <div className="overflow-y-auto pr-2 lg:w-64 w-full shrink-0">
-              <ProductListFilters specifications={selected_category?.specifications}/>
-              
+              <ProductListFilters
+                specifications={selected_category?.specifications}
+              />
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 lg:gap-8">
