@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function SearchSortButtons() {
-  const router = useRouter(); 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const currentSortingValue = params.get("ordering");
@@ -24,27 +24,26 @@ export default function SearchSortButtons() {
   );
 
   useEffect(() => {
-    sortingOptions.forEach(el => {
-      if(el.value === currentSortingValue) {
+    sortingOptions.forEach((el) => {
+      if (el.value === currentSortingValue) {
         setSelectedSortingOption(el);
       }
-    })
-  }, [currentSortingValue])
+    });
+  }, [currentSortingValue]);
 
   const debounced = useDebouncedCallback((value: string) => {
-    handleSearch(value)
-  }, 1000)
+    handleSearch(value);
+  }, 1000);
 
   const handleSearch = (e: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if(e) {
-      params.set("search", e)
-    }else{
-      params.delete("search")
+    if (e) {
+      params.set("search", e);
+    } else {
+      params.delete("search");
     }
 
-    router.push(`${pathName}/?${params}`)
-  }
+    router.push(`${pathName}/?${params}`);
+  };
 
   return (
     <div className="flex flex-row mt-4 mb-8 items-center gap-3">

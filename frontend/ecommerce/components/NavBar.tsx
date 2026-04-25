@@ -10,6 +10,7 @@ import {
   User,
   X,
   LucideProps,
+  ChevronDown,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -80,9 +81,32 @@ export default function NavBar({
           <span className="text-light-blue">STORE</span>
         </Link>
         <div className="hidden md:visible md:flex flex-row gap-8 text-muted-foreground text-sm font-medium items-center">
-          <Link className="hover:text-light-blue transition-colors" href="/">
-            Shop
-          </Link>
+          <div className="relative group">
+            <button className="flex flex-row items-center gap-1 hover:text-light-blue transition-colors cursor-pointer">
+              Shop
+              <ChevronDown className="w-4 h-4" />
+            </button>
+
+            <div className="opacity-0 invisible group-hover:visible group-hover:opacity-100 origin-top w-56 absolute left-1/2 mt-2 -translate-x-1/2 top-full py-2 flex-col bg-card rounded-xl shadow-2xl border border-muted-background overflow-hidden duration-200 transition-all">
+              <p className="uppercase text-xs font-semibold tracking-wider px-4 py-2">
+                CATEGORIES
+              </p>
+              <div className="flex flex-col text-foreground">
+                {categories?.map((category) => {
+                  return (
+                    <Link
+                      key={category.slug}
+                      className="px-4 py-2.5 gap-3 flex flex-row items-center text-sm hover:text-light-blue hover:bg-light-blue/5 transition-colors"
+                      href={`/products/categories/${category.slug}`}
+                    >
+                      <span>{category.emoji}</span>
+                      <span>{category.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
           <Link className="hover:text-light-blue transition-colors" href="/">
             Builds
           </Link>
