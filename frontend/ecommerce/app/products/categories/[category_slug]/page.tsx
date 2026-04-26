@@ -79,7 +79,7 @@ const page = async ({
     <div className="bg-background min-h-screen nav-margin">
       <div className="custom-container inline-padding mx-auto">
         <div className="flex flex-col">
-          <div className="flex flex-row items-center text-sm gap-2 mb-6">
+          <div className="flex flex-row items-center text-xs gap-2 mb-6">
             <Link
               href="/"
               className="text-muted-foreground hover:text-light-blue transition-colors"

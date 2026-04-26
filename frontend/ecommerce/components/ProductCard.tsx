@@ -1,9 +1,9 @@
-'use client'
+"use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Product } from "@/types/api";
 import { usePathname } from "next/navigation";
-import React from "react";
+import { Product } from "@/types/api";
+import ProductImage from "./ProductImage";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const pathname = usePathname();
@@ -13,15 +13,10 @@ const ProductCard = ({ product }: { product: Product }) => {
       className="group block"
       href={`${pathname}/${product.slug}`}
     >
-      <div className="relative aspect-square overflow-hidden rounded-lg border border-muted-background bg-card">
-        <Image
-          className="w-full h-full object-cover group-hover:scale-105 duration-500 transition-transform"
-          width={800}
-          height={800}
-          src={product.product_img}
-          alt={product.name}
-        />
-      </div>
+      <ProductImage
+        productImg={product.product_img}
+        productName={product.name}
+      />
       <div className="flex flex-col mt-2 font-space">
         <p className="text-muted-foreground text-xs tracking-wider uppercase">
           {product.category.name}
