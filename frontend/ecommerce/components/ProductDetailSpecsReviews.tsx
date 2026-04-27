@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import { Product } from "@/types/api";
+import { Product, Review } from "@/types/api";
 import ProductDetailSpecs from "./ProductDetailSpecs";
+import ProductDetailReviews from "./ProductDetailReviews";
 
 const ProductDetailSpecsReviews = ({
   specs,
@@ -10,10 +11,10 @@ const ProductDetailSpecsReviews = ({
   productSlug,
 }: {
   specs: Product["specification_values"];
-  reviews: Product["reviews"];
+  reviews: Review[];
   productSlug: Product["slug"];
 }) => {
-  const [showSpecifications, setShowSpecifications] = useState(true);
+  const [showSpecifications, setShowSpecifications] = useState(false);
   return (
     <div className="flex flex-col mt-16 items-start">
       <div className="border border-muted-background text-sm rounded-lg w-auto bg-card p-1 mb-8">
@@ -30,7 +31,7 @@ const ProductDetailSpecsReviews = ({
           Reviews ({reviews.length})
         </button>
       </div>
-      {showSpecifications && <ProductDetailSpecs specs={specs}/>}
+      {showSpecifications ? <ProductDetailSpecs specs={specs}/> : <ProductDetailReviews reviews={reviews}/>}
     </div>
   );
 };

@@ -16,6 +16,7 @@ import ProductImage from "@/components/ProductImage";
 import ProductDetailActions from "@/components/ProductDetailActions";
 import Loading from "@/app/loading";
 import ProductDetailSpecsReviews from "@/components/ProductDetailSpecsReviews";
+import ProductStarRating from "@/components/ProductStarRating";
 
 function ExtraShippingInfo({
   Icon,
@@ -39,14 +40,11 @@ function ExtraShippingInfo({
 
 export function PageContent({ product }: { product: Product }) {
   let ratingSum = 0;
-  let n = 0;
-
   product.reviews.forEach((review) => {
     ratingSum += review.rating;
   });
-
   const avgRating = Math.ceil((ratingSum / product.reviews.length) * 10) / 10;
-  console.log(avgRating);
+  
   return (
     <>
       <div className="w-full grid grid-cols-2 gap-4 lg:gap-16">
@@ -64,28 +62,7 @@ export function PageContent({ product }: { product: Product }) {
             {product.name}
           </h1>
           <div className="mb-6 flex flex-row items-center gap-2">
-            <div className="flex flex-row gap-0.5">
-              {(() => {
-                const stars = [];
-                
-                for (let i = 1; i < avgRating; i++) {
-                  stars.push(
-                    <Star
-                      className="w-4 h-4 text-light-blue fill-light-blue"
-                      key={i}
-                    />,
-                  );
-                }
-
-                for (let i = 5; i > avgRating; i--) {
-                  stars.push(
-                    <Star className="w-4 h-4 text-muted-foreground" key={i} />,
-                  );
-                }
-
-                return stars;
-              })()}
-            </div>
+            <ProductStarRating rating={avgRating} starsSize="4" />
             <p className="text-sm text-muted-foreground">
               {avgRating} ({product.reviews.length}{" "}
               {product.reviews.length !== 1 ? "reviews" : "review"})
