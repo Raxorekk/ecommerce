@@ -26,8 +26,8 @@ const ProductDetailActions = ({ product }: { product: Product }) => {
           +
         </button>
       </div>
-      <button className="blue-button text-primary-foreground px-6 text-sm font-semibold flex-1 justify-center tracking-wider gap-2 flex flex-row items-center">
-        <ShoppingBag className="h-4 w-4" />
+      <button className="blue-button text-primary-foreground px-6 text-sm lg:text-base font-semibold flex-1 lg:max-w-64 justify-center tracking-wider gap-2 flex flex-row items-center">
+        <ShoppingBag className="h-4 w-4 lg:h-5 lg:w-5" />
         ADD TO CART
       </button>
     </div>

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from users.serializers import UserLightSerializer
 from . import models
         
         
@@ -46,11 +47,20 @@ class CategoryLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
         fields = ["name", "slug", "emoji"]
+        
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserLightSerializer()
+    
+    class Meta:
+        model = models.Review
+        fields = ['title', 'content', 'user', 'created_at', 'rating', 'product']
 
 
 class ProductSerializer(serializers.ModelSerializer):
     category = CategoryLightSerializer()
     specification_values = SpecificationValueSerializer(many=True)
+    reviews = ReviewSerializer(many=True)
     
     class Meta:
         model = models.Product

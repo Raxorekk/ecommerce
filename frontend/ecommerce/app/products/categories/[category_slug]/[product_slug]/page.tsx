@@ -4,6 +4,7 @@ import {
   Shield,
   RotateCcw,
   LucideProps,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -37,9 +38,18 @@ function ExtraShippingInfo({
 }
 
 export function PageContent({ product }: { product: Product }) {
+  let ratingSum = 0;
+  let n = 0;
+
+  product.reviews.forEach((review) => {
+    ratingSum += review.rating;
+  });
+
+  const avgRating = Math.ceil((ratingSum / product.reviews.length) * 10) / 10;
+  console.log(avgRating);
   return (
     <>
-      <div className="w-full grid grid-cols-2 gap-4">
+      <div className="w-full grid grid-cols-2 gap-4 lg:gap-16">
         <div className="group">
           <ProductImage
             productImg={product.product_img}
@@ -50,11 +60,36 @@ export function PageContent({ product }: { product: Product }) {
           <p className="text-light-blue uppercase tracking-widest text-xs mb-2">
             {product.category.name}
           </p>
-          <h1 className="text-foreground font-bold text-2xl mb-3">
+          <h1 className="text-foreground font-bold text-2xl lg:text-4xl mb-3">
             {product.name}
           </h1>
-          <div className="mb-6">
-            <p>234 reviews 4.9</p>
+          <div className="mb-6 flex flex-row items-center gap-2">
+            <div className="flex flex-row gap-0.5">
+              {(() => {
+                const stars = [];
+                
+                for (let i = 1; i < avgRating; i++) {
+                  stars.push(
+                    <Star
+                      className="w-4 h-4 text-light-blue fill-light-blue"
+                      key={i}
+                    />,
+                  );
+                }
+
+                for (let i = 5; i > avgRating; i--) {
+                  stars.push(
+                    <Star className="w-4 h-4 text-muted-foreground" key={i} />,
+                  );
+                }
+
+                return stars;
+              })()}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {avgRating} ({product.reviews.length}{" "}
+              {product.reviews.length !== 1 ? "reviews" : "review"})
+            </p>
           </div>
           <span className="text-foreground font-bold text-3xl">
             ${product.price}
@@ -86,13 +121,12 @@ export function PageContent({ product }: { product: Product }) {
           </div>
         </div>
       </div>
-      
-        <ProductDetailSpecsReviews
-          specs={product.specification_values}
-          reviews={product.reviews}
-          productSlug={product.slug}
-        />
-      
+
+      <ProductDetailSpecsReviews
+        specs={product.specification_values}
+        reviews={product.reviews}
+        productSlug={product.slug}
+      />
     </>
   );
 }
@@ -108,7 +142,7 @@ const page = async ({
     method: "GET",
     next: {
       tags: [`products_${category_slug}`, `product_${product_slug}`],
-      revalidate: 3600,
+      revalidate: 1,
     },
   });
 
@@ -129,11 +163,10 @@ const page = async ({
   ]);
 
   if (!product_res) notFound();
-
   return (
     <div className="bg-background min-h-screen nav-margin">
       <div className="inline-padding mx-auto custom-container">
-        <div className="flex flex-row items-center text-xs gap-2 mb-6">
+        <div className="flex flex-row items-center text-xs lg:text-sm gap-2 mb-6 lg:mb-8">
           <Link
             href="/"
             className="text-muted-foreground hover:text-light-blue transition-colors"

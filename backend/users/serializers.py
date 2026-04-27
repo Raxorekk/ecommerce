@@ -72,3 +72,9 @@ class AdminMeUserSerializer(serializers.ModelSerializer):
             "last_name",
             "addresses"
         ]
+        
+
+class UserLightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name"]

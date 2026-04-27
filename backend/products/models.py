@@ -96,3 +96,6 @@ class Review(models.Model):
         MaxValueValidator(5)
     ], blank=False, null=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name[0]}. {self.rating} stars, {self.product.name}'

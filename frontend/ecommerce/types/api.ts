@@ -5,15 +5,30 @@ export type Category = {
   specifications: {
     name: string;
     type: string;
-    values: string[];
     slug: string;
+    values: string[];
   }[];
 };
 
 export type SpecificationValues = {
   name: string;
+  slug: string;
   value: string;
 };
+
+export type UserFullName = {
+  first_name: string;
+  last_name: string;
+}
+
+export type Review = {
+  title: string;
+  content: string;
+  user: UserFullName
+  created_at: string;
+  rating: number;
+  product: number;
+}
 
 export type Product = {
   id: number;
@@ -21,7 +36,7 @@ export type Product = {
   description: string;
   price: string;
   category: Category;
-  reviews: Object[];
+  reviews: Review[];
   slug: string;
   specification_values: SpecificationValues[];
   product_img: string;
