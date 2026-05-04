@@ -4,9 +4,10 @@ from django_filters import rest_framework as django_filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.pagination import PageNumberPagination
+from .permissions import IsOwnerOrReadOnly
+from .filters import ProductFilter
 from . import models
 from . import serializers
-from .filters import ProductFilter
 
 # Create your views here.
 
@@ -47,6 +48,27 @@ class CategoryViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAdminUser]
+            
+        return [permission() for permission in permission_classes]
+
+
+class ReviewViewSet(ModelViewSet):
+    queryset = models.Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["user"] = self.request.user
+
+        return context
+    
+    def get_permissions(self):
+        if self.action in ['update']:
+            permission_classes = [IsOwnerOrReadOnly]
+        elif self.action in ['create']:
+            permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsAdminUser]
             

@@ -8,13 +8,11 @@ import ProductDetailReviews from "./ProductDetailReviews";
 const ProductDetailSpecsReviews = ({
   specs,
   reviews,
-  productSlug,
 }: {
   specs: Product["specification_values"];
   reviews: Review[];
-  productSlug: Product["slug"];
 }) => {
-  const [showSpecifications, setShowSpecifications] = useState(false);
+  const [showSpecifications, setShowSpecifications] = useState(true);
   return (
     <div className="flex flex-col mt-16 items-start">
       <div className="border border-muted-background text-sm rounded-lg w-auto bg-card p-1 mb-8">

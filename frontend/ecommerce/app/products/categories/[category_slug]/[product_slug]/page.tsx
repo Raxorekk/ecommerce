@@ -102,7 +102,6 @@ export function PageContent({ product }: { product: Product }) {
       <ProductDetailSpecsReviews
         specs={product.specification_values}
         reviews={product.reviews}
-        productSlug={product.slug}
       />
     </>
   );
@@ -119,7 +118,7 @@ const page = async ({
     method: "GET",
     next: {
       tags: [`products_${category_slug}`, `product_${product_slug}`],
-      revalidate: 1,
+      revalidate: 3600,
     },
   });
 

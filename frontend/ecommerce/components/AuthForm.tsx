@@ -1,5 +1,6 @@
 "use client";
 import { handleAuth } from "@/app/actions/auth";
+
 import { useFormStatus } from "react-dom";
 
 
@@ -22,6 +23,7 @@ export default function AuthForm({ authType }: AuthType) {
           type="email"
           name="email"
           placeholder="you@example.com"
+          required
         />
       </div>
       <div className="flex flex-col">
@@ -31,6 +33,7 @@ export default function AuthForm({ authType }: AuthType) {
           type="password"
           name="password"
           placeholder="••••••••"
+          required
         />
       </div>
       {authType === "register" && (
@@ -42,6 +45,7 @@ export default function AuthForm({ authType }: AuthType) {
               type="password"
               name="verify_password"
               placeholder="••••••••"
+              required
             />
           </div>
           <div className="flex flex-col">
@@ -51,6 +55,7 @@ export default function AuthForm({ authType }: AuthType) {
               type="date"
               name="date_of_birth"
               placeholder=" "
+              required
             />
           </div>
           <div className="flex flex-col">
@@ -60,6 +65,7 @@ export default function AuthForm({ authType }: AuthType) {
               type="phone"
               name="phone_number"
               placeholder="+48123456789"
+              required
             />
           </div>
           <div className="flex flex-col">
@@ -69,6 +75,7 @@ export default function AuthForm({ authType }: AuthType) {
               type="text"
               name="first_name"
               placeholder="••••••••"
+              required
             />
           </div>
           <div className="flex flex-col">
@@ -78,6 +85,7 @@ export default function AuthForm({ authType }: AuthType) {
               type="text"
               name="last_name"
               placeholder="••••••••"
+              required
             />
           </div>
         </>

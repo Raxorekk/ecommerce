@@ -50,11 +50,21 @@ class CategoryLightSerializer(serializers.ModelSerializer):
         
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserLightSerializer()
+    product = serializers.SlugRelatedField(queryset=models.Product.objects.all(), slug_field="slug")
     
     class Meta:
         model = models.Review
         fields = ['title', 'content', 'user', 'created_at', 'rating', 'product']
+        read_only_fields= ['user']
+
+    def create(self, validated_data):
+        return models.Review.objects.create(user=self.context['user'], **validated_data)
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['user'] = UserLightSerializer(instance.user).data
+        
+        return data
 
 
 class ProductSerializer(serializers.ModelSerializer):

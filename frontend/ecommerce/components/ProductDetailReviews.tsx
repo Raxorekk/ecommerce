@@ -1,6 +1,8 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Review } from "@/types/api";
 import ProductStarRating from "./ProductStarRating";
+import ProductReviewForm from "./ProductReviewForm";
+import ProductReviewHeader from "./ProductReviewHeader";
 
 const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
   let ratingSum = 0;
@@ -9,7 +11,7 @@ const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
   });
   const avgRating = Math.ceil((ratingSum / reviews.length) * 10) / 10;
 
-  const ratingBars = [];
+  const ratingBars = [] as ReactNode[];
 
   for (let i = 5; i >= 1; i--) {
     const distinctRatingsCount = reviews.filter(
@@ -34,36 +36,25 @@ const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
     );
   }
   return (
-    <div className="flex flex-col w-full gap-8 mb-10">
-      <div className="flex flex-col justify-center items-center">
-        <span className="text-5xl font-space font-bold mb-2">{avgRating}</span>
-        <ProductStarRating rating={avgRating} starsSize="4" />
-        <p className="mt-1 text-muted-foreground text-sm">
-          {reviews.length} {reviews.length !== 1 ? "reviews" : "review"}
-        </p>
-      </div>
-      <div className="space-y-2">{ratingBars}</div>
-      <div className="flex flex-col gap-3 items-center">
-        <span className="text-muted-foreground text-sm">
-          Bought this product?
-        </span>
-        <button className="bg-card text-sm font-medium cursor-pointer py-2.5 px-6 rounded-lg border border-muted-background hover:text-light-blue hover:border-light-blue/50 transition-colors">
-          Write a Review
-        </button>
-      </div>
+    <div className="flex flex-col w-full">
+      <ProductReviewHeader
+        avgRating={avgRating}
+        reviewsLength={reviews.length}
+        ratingBars={ratingBars}
+      />
       <div>
-        {reviews.map((review) => {
+        {reviews.map((review, index) => {
           const createdAt = new Date(review.created_at);
           const createdAtMonth = createdAt.toLocaleString("eng", {
             month: "short",
           });
           const createdAtDay = createdAt.getDate();
           const createdAtYear = createdAt.getFullYear();
-          console.log(createdAtYear);
+
           return (
             <div
               className="border-b last:border-0 border-muted-background pt-6 pb-4 first:pt-0"
-              key={review.content}
+              key={index}
             >
               <div className="flex flex-row gap-2 items-center mb-2">
                 <ProductStarRating rating={review.rating} starsSize="3.5" />
