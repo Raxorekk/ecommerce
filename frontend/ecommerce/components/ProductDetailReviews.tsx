@@ -4,13 +4,12 @@ import ProductStarRating from "./ProductStarRating";
 import ProductReviewForm from "./ProductReviewForm";
 import ProductReviewHeader from "./ProductReviewHeader";
 
-const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
+const ProductDetailReviews = ({ reviews, reviewsToDisplay }: { reviews: Review[]; reviewsToDisplay: Review[] }) => {
   let ratingSum = 0;
   reviews.forEach((review) => {
     ratingSum += review.rating;
   });
   const avgRating = Math.ceil((ratingSum / reviews.length) * 10) / 10;
-
   const ratingBars = [] as ReactNode[];
 
   for (let i = 5; i >= 1; i--) {
@@ -35,6 +34,7 @@ const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
       </div>,
     );
   }
+  
   return (
     <div className="flex flex-col w-full">
       <ProductReviewHeader
@@ -43,7 +43,7 @@ const ProductDetailReviews = ({ reviews }: { reviews: Review[] }) => {
         ratingBars={ratingBars}
       />
       <div>
-        {reviews.map((review, index) => {
+        {reviewsToDisplay.map((review, index) => {
           const createdAt = new Date(review.created_at);
           const createdAtMonth = createdAt.toLocaleString("eng", {
             month: "short",

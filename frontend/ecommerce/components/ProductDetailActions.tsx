@@ -14,14 +14,14 @@ const ProductDetailActions = ({ product }: { product: Product }) => {
           onClick={() => {
             quantityAddToCart > 1 && setQuantityAddToCart((prev) => prev - 1);
           }}
-          className="border-r border-muted-background px-3.5 py-3 cursor-pointer hover:bg-muted transition-colors"
+          className="border-r border-muted-background px-3.5 h-full rounded-l-md cursor-pointer hover:bg-muted transition-colors"
         >
           −
         </button>
         <p className="px-3.5 py-3 w-12 text-center">{quantityAddToCart}</p>
         <button
           onClick={() => setQuantityAddToCart((prev) => prev + 1)}
-          className="border-l border-muted-background px-3.5 py-3 cursor-pointer hover:bg-muted transition-colors"
+          className="border-l border-muted-background px-3.5 h-full rounded-r-md cursor-pointer hover:bg-muted transition-colors"
         >
           +
         </button>
