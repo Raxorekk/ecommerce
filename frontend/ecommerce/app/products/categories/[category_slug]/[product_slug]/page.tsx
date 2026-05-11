@@ -141,7 +141,7 @@ const page = async ({
   if (!product_res) notFound();
   return (
     <div className="bg-background min-h-screen nav-margin">
-      <div className="inline-padding mx-auto custom-container">
+      <div className="inline-padding mx-auto custom-container mb-8 lg:mb-12">
         <div className="flex flex-row items-center text-xs lg:text-sm gap-2 mb-6 lg:mb-8">
           <Link
             href="/"

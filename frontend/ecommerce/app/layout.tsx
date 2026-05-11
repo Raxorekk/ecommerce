@@ -3,6 +3,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { apiFetch } from "@/lib/api";
 import { Category } from "@/types/api";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,6 +35,7 @@ export default async function RootLayout({
       <body className="antialiased">
         <NavBar categories={res}/>
         {children}
+        <Footer />
         </body>
     </html>
   );

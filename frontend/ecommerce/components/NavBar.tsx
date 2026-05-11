@@ -15,6 +15,7 @@ import {
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Category } from "@/types/api";
+import { CATEGORIES } from "@/lib/routes";
 
 function NavBarDropdownButton({
   setShowDropdown,
