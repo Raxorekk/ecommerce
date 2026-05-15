@@ -8,8 +8,7 @@ from products.models import Product
 
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='carts')
-    is_active = models.BooleanField(default=False)
-    
+    is_active = models.BooleanField(default=True)
     
     @property
     def total(self):

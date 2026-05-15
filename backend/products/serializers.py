@@ -75,3 +75,11 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
         fields = ['id', 'name', 'description', 'price', 'category', 'specification_values', "slug", "reviews", "product_img"]
+        
+
+class ProductLightSerializer(serializers.ModelSerializer):
+    category = CategoryLightSerializer()
+
+    class Meta:
+        model = models.Product
+        fields = ['id', 'name', 'price', 'category', 'slug', 'product_img']
