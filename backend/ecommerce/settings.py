@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django_countries",
     "users",
     "products",
+    "cart",
 ]
 
 AUTH_USER_MODEL = 'users.User'

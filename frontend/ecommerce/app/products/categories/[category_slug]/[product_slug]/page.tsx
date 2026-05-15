@@ -44,7 +44,7 @@ export function PageContent({ product }: { product: Product }) {
     ratingSum += review.rating;
   });
   const avgRating = Math.ceil((ratingSum / product.reviews.length) * 10) / 10;
-  
+
   return (
     <>
       <div className="w-full grid grid-cols-2 gap-4 lg:gap-16">
