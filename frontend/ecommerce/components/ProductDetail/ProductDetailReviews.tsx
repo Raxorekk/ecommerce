@@ -1,10 +1,16 @@
 import React, { ReactNode } from "react";
 import { Review } from "@/types/api";
-import ProductStarRating from "./ProductStarRating";
-import ProductReviewForm from "./ProductReviewForm";
-import ProductReviewHeader from "./ProductReviewHeader";
+import ProductStarRating from "../ProductStarRating";
+import ProductReviewForm from "../ProductReviewForm";
+import ProductReviewHeader from "../ProductReviewHeader";
 
-const ProductDetailReviews = ({ reviews, reviewsToDisplay }: { reviews: Review[]; reviewsToDisplay: Review[] }) => {
+const ProductDetailReviews = ({
+  reviews,
+  reviewsToDisplay,
+}: {
+  reviews: Review[];
+  reviewsToDisplay: Review[];
+}) => {
   let ratingSum = 0;
   reviews.forEach((review) => {
     ratingSum += review.rating;
@@ -34,7 +40,7 @@ const ProductDetailReviews = ({ reviews, reviewsToDisplay }: { reviews: Review[]
       </div>,
     );
   }
-  
+
   return (
     <div className="flex flex-col w-full">
       <ProductReviewHeader

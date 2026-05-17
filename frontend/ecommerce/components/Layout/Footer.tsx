@@ -1,3 +1,4 @@
+import "../../app/globals.css"
 import Link from "next/link";
 import React from "react";
 import { CATEGORIES } from "@/lib/routes";

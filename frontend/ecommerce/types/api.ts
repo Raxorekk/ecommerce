@@ -41,3 +41,24 @@ export type Product = {
   specification_values: SpecificationValues[];
   product_img: string;
 };
+
+export type LightProduct = {
+  id: number;
+  name: string;
+  price: number;
+  category: Category;
+  slug: string;
+  product_img: string;
+}
+
+export type Cart = {
+  user: number;
+  is_active: boolean;
+  total: number;
+  items: {
+    id: number;
+    cart: number;
+    product: LightProduct;
+    quantity: number;
+  }[];
+}

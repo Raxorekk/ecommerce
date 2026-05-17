@@ -9,35 +9,32 @@ from . import serializers, models
 
 
 class CartViewSet(ModelViewSet):
-    queryset = models.Cart.objects.all()
     serializer_class = serializers.CartSerializer
     permission_classes = [IsAuthenticated]
-
 
     @action(detail=False, methods=['post'], url_path='add')
     def add_to_cart(self, request):
         cart, cart_created = models.Cart.objects.get_or_create(is_active=True, user=request.user)
-        item, item_created = models.CartItem.objects.get_or_create(cart=cart, product_id=request.data['product'], defaults={'quantity': 1})
-        
+        item, item_created = models.CartItem.objects.get_or_create(cart=cart, product_id=request.data.get('product'), defaults={'quantity': 1})
+
         if not item_created:
             item.quantity += 1
             item.save()
             
-        return Response(serializers.CartSerializer(cart).data)
-        
-    @action(detail=True, methods=['delete'], url_path="remove")
-    def remove_from_cart(self, request, pk):
-        print('c')
-        
+        return Response(data=serializers.CartSerializer(cart).data, status=200)
+
     def get_serializer_class(self):
         if self.action == 'add_to_cart':
             return serializers.AddToCartSerializer
-        elif self.action == 'remove_from_cart':
-            return serializers.CartItemSerializer
         return serializers.CartSerializer
     
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["user"] = self.request.user
+    def get_queryset(self):
+        return models.Cart.objects.prefetch_related('items__product__category').filter(user=self.request.user)
+    
 
-        return context
+class CartItemViewSet(ModelViewSet):
+    serializer_class = serializers.CartItemSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return models.CartItem.objects.select_related('product__category').filter(cart__user=self.request.user)

@@ -13,11 +13,6 @@ type PaginatedProductResponse = {
   results: Product[];
 };
 
-type PaginatedCategoryResponse = {
-  count: number;
-  results: Category[];
-};
-
 const page = async ({
   searchParams,
   params,
@@ -55,7 +50,7 @@ const page = async ({
     },
   );
 
-  const categoriesPromise = apiFetch<PaginatedCategoryResponse>(
+  const categoriesPromise = apiFetch<Category[]>(
     `api/categories`,
     {
       method: "GET",
@@ -64,7 +59,7 @@ const page = async ({
         revalidate: 3600,
       },
     },
-  ).then((categories_res) => categories_res?.results);
+  );
 
   const [products_res, categories_res] = await Promise.all([
     productsPromise,

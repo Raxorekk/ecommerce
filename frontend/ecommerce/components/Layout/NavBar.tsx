@@ -1,5 +1,5 @@
 "use client";
-import "../app/globals.css";
+import "../../app/globals.css"
 import {
   Menu,
   ShoppingBag,
@@ -47,7 +47,7 @@ function NavBarDropdownButton({
 export default function NavBar({
   categories,
 }: {
-  categories: Category[] | undefined;
+  categories: Category[] | null;
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -70,7 +70,6 @@ export default function NavBar({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   return (
     <nav className="fixed left-0 top-0 right-0 flex z-50 h-16 lg:h-20 bg-background/80 border-b border-muted-background backdrop-blur-md">
       <div className="custom-container inline-padding mx-auto flex flex-row items-center justify-between">
@@ -123,9 +122,9 @@ export default function NavBar({
             <User className="h-4 w-4" />
             Account
           </button>
-          <button className="cursor-pointer h-5 w-5">
+          <Link href="/cart" className="cursor-pointer h-5 w-5">
             <ShoppingBag className="h-5 w-5 hover:text-light-blue transition-colors" />
-          </button>
+          </Link>
           <button
             onClick={() => setShowDropdown((prev) => !prev)}
             className="md:hidden cursor-pointer h-5 w-5"

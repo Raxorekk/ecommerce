@@ -6,7 +6,7 @@ const ProductCategories = ({
   categories,
   selected_category,
 }: {
-  categories: Category[] | undefined;
+  categories: Category[] | null;
   selected_category: Category | undefined;
 }) => {
   return (

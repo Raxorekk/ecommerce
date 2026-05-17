@@ -7,6 +7,7 @@ import ProductImage from "./ProductImage";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const pathname = usePathname();
+  console.log(product)
   return (
     <Link
       key={product.id}

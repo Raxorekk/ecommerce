@@ -68,13 +68,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategoryLightSerializer()
+    category = CategoryLightSerializer(read_only=True)
     specification_values = SpecificationValueSerializer(many=True)
     reviews = ReviewSerializer(many=True)
     
     class Meta:
         model = models.Product
-        fields = ['id', 'name', 'description', 'price', 'category', 'specification_values', "slug", "reviews", "product_img"]
+        fields = ['id', 'name', 'description', 'price', 'category', 'specification_values', "slug", "product_img", "reviews"]
         
 
 class ProductLightSerializer(serializers.ModelSerializer):

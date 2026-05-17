@@ -13,9 +13,9 @@ import { Suspense } from "react";
 import { Product, Category } from "@/types/api";
 import { notFound } from "next/navigation";
 import ProductImage from "@/components/ProductImage";
-import ProductDetailActions from "@/components/ProductDetailActions";
+import ProductDetailActions from "@/components/ProductDetail/ProductDetailActions";
 import Loading from "@/app/loading";
-import ProductDetailSpecsReviews from "@/components/ProductDetailSpecsReviews";
+import ProductDetailSpecsReviews from "@/components/ProductDetail/ProductDetailSpecsReviews";
 import ProductStarRating from "@/components/ProductStarRating";
 
 function ExtraShippingInfo({

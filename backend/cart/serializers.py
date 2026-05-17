@@ -10,10 +10,11 @@ class AddToCartSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductLightSerializer()
+    product = ProductLightSerializer(read_only=True)
+    
     class Meta:
         model = models.CartItem
-        fields = ['product', 'quantity']
+        fields = ['id','cart', 'product', 'quantity']
         
 
 class CartSerializer(serializers.ModelSerializer):
@@ -21,10 +22,12 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Cart
-        fields = ['user', 'is_active', 'items']
+        fields = ['user', 'is_active', 'total', 'items']
     
     def get_items(self, obj):
         return CartItemSerializer(
-            models.CartItem.objects.select_related('product').filter(cart=obj),
-            many=True
+            obj.items.all(),
+            many=True,
+            context=self.context
         ).data
+        
