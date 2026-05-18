@@ -114,31 +114,16 @@ const page = async ({
 }) => {
   const { category_slug, product_slug } = await params;
 
-  const productPromise = apiFetch<Product>(`api/products/${product_slug}/`, {
+  const product_res = await apiFetch<Product>(`api/products/${product_slug}/`, {
     method: "GET",
     next: {
       tags: [`products_${category_slug}`, `product_${product_slug}`],
       revalidate: 3600,
     },
   });
+  const product = product_res?.data;
 
-  const categoryPromise = apiFetch<Category>(
-    `api/categories/${category_slug}/`,
-    {
-      method: "GET",
-      next: {
-        tags: [`categories`, `category_${category_slug}`],
-        revalidate: 3600,
-      },
-    },
-  );
-
-  const [product_res, category_res] = await Promise.all([
-    productPromise,
-    categoryPromise,
-  ]);
-
-  if (!product_res) notFound();
+  if (!product) notFound();
   return (
     <div className="bg-background min-h-screen nav-margin">
       <div className="inline-padding mx-auto custom-container mb-8 lg:mb-12">
@@ -152,14 +137,14 @@ const page = async ({
           <ChevronRight className="text-muted-foreground w-4 h-4" />
           <Link
             className="text-muted-foreground hover:text-light-blue transition-colors"
-            href={`/products/categories/${category_res?.slug}/`}
+            href={`/products/categories/${product?.category.slug}/`}
           >
             Shop
           </Link>
           <ChevronRight className="text-muted-foreground w-4 h-4" />
-          <p className="text-foreground font-medium">{product_res?.name}</p>
+          <p className="text-foreground font-medium">{product?.name}</p>
         </div>
-        <PageContent product={product_res} />
+        <PageContent product={product} />
       </div>
     </div>
   );

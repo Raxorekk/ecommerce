@@ -36,9 +36,9 @@ export async function handleAuth(
         body: JSON.stringify(bodyData),
       },
     );
-    if (response?.access) {
+    if (response?.data.access) {
       const cookieStore = await cookies();
-      cookieStore.set("ACCESS_TOKEN", response.access, {
+      cookieStore.set("ACCESS_TOKEN", response.data.access, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         path: "/",
@@ -47,9 +47,9 @@ export async function handleAuth(
         maxAge: 60 * 60 * 24,
       });
 
-      if (response?.refresh) {
+      if (response?.data.refresh) {
         const cookieStore = await cookies();
-        cookieStore.set("REFRESH_TOKEN", response.refresh, {
+        cookieStore.set("REFRESH_TOKEN", response.data.refresh, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           path: "/",

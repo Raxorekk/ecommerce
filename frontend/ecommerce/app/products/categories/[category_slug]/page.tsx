@@ -1,12 +1,12 @@
-import React from "react";
 import SearchSortButtons from "@/components/ProductListSearchSort";
 import ProductCategories from "@/components/ProductCategories";
-import { apiFetch } from "@/lib/api";
-import { Product, Category } from "@/types/api";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import ProductListFilters from "@/components/ProductListFilters";
+import { ChevronRight } from "lucide-react";
+import { apiFetch } from "@/lib/api";
+import { Product, Category } from "@/types/api";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 type PaginatedProductResponse = {
   count: number;
@@ -50,25 +50,24 @@ const page = async ({
     },
   );
 
-  const categoriesPromise = apiFetch<Category[]>(
-    `api/categories`,
-    {
-      method: "GET",
-      next: {
-        tags: [`categories`],
-        revalidate: 3600,
-      },
+  const categoriesPromise = apiFetch<Category[]>(`api/categories`, {
+    method: "GET",
+    next: {
+      tags: [`categories`],
+      revalidate: 3600,
     },
-  );
+  });
 
   const [products_res, categories_res] = await Promise.all([
     productsPromise,
     categoriesPromise,
   ]);
+  const products = products_res?.data;
+  const categories = categories_res?.data;
 
-  const selected_category = categories_res?.find(
-    (c) => c.slug === category_slug,
-  );
+  const selected_category = categories?.find((c) => c.slug === category_slug);
+
+  if (!selected_category) notFound();
 
   return (
     <div className="bg-background min-h-screen nav-margin">
@@ -87,7 +86,7 @@ const page = async ({
             </p>
           </div>
           <ProductCategories
-            categories={categories_res}
+            categories={categories !== undefined ? categories : []}
             selected_category={selected_category}
           />
           <div className="flex-row w-full justify-between md:flex hidden">
@@ -96,8 +95,8 @@ const page = async ({
                 {selected_category?.name}
               </h1>
               <span className="text-sm text-muted-foreground">
-                {products_res?.count}{" "}
-                {products_res?.count !== 1 ? "products" : "product"}
+                {products?.count}{" "}
+                {products?.count !== 1 ? "products" : "product"}
               </span>
             </div>
             <SearchSortButtons />
@@ -108,8 +107,7 @@ const page = async ({
               {selected_category?.name}
             </h1>
             <span className="text-sm text-muted-foreground">
-              {products_res?.count}{" "}
-              {products_res?.count !== 1 ? "products" : "product"}
+              {products?.count} {products?.count !== 1 ? "products" : "product"}
             </span>
           </div>
           <div className="md:hidden block">
@@ -118,7 +116,7 @@ const page = async ({
 
           <div className="lg:hidden block">
             <div className="grid grid-cols-2 lg:grid-cols-4 lg:gap-8">
-              {products_res?.results.map((product) => {
+              {products?.results.map((product) => {
                 return <ProductCard key={product.id} product={product} />;
               })}
             </div>
@@ -132,7 +130,7 @@ const page = async ({
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 lg:gap-8">
-              {products_res?.results.map((product) => {
+              {products?.results.map((product) => {
                 return <ProductCard key={product.id} product={product} />;
               })}
             </div>
