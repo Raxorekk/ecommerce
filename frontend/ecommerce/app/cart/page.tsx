@@ -11,6 +11,8 @@ import CartItem from "@/components/CartItem";
 const PageContent = () => {
   const router = useRouter();
   const [data, setData] = useState<Cart | null>(null);
+  const [itemsQuantity, setItemsQuantity] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const fetchCart = async () => {
     const cartData = await getCartData();
@@ -20,6 +22,17 @@ const PageContent = () => {
   useEffect(() => {
     fetchCart();
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setItemsQuantity(0);
+      setTotalPrice(0);
+      for (const el of data?.items) {
+        setItemsQuantity((prev) => (prev += el.quantity));
+        setTotalPrice(prev => prev += Number(el.product.price) * el.quantity)
+      }
+    }
+  }, [data]);
 
   return (
     <div className="bg-background nav-margin mb-10 lg:mb-16">
@@ -36,9 +49,9 @@ const PageContent = () => {
           <h1 className="font-semibold text-3xl lg:text-4xl">Your Cart</h1>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          {data?.items.length && data?.items.length !== 1
-            ? `${data?.items.length} items`
-            : `${data?.items.length} item`}{" "}
+          {itemsQuantity && itemsQuantity !== 1
+            ? `${itemsQuantity} items`
+            : `${itemsQuantity} item`}{" "}
           in your cart
         </p>
         {data?.items.length === 0 ? (
@@ -58,11 +71,11 @@ const PageContent = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
             <div className="space-y-2">
               {data?.items.map((item) => {
                 return (
-                  <CartItem key={item.id} item={item} onUpdate={fetchCart} />
+                  <CartItem key={item.id} item={item} onUpdate={fetchCart} setTotalCartPrice={setTotalPrice} setCartItemQuantity={setItemsQuantity} />
                 );
               })}
             </div>
@@ -84,7 +97,7 @@ const PageContent = () => {
               <div className="flex flex-row justify-between mb-4 items-baseline">
                 <h4 className="font-bold">Total</h4>
                 <h3 className="text-2xl font-bold">
-                  ${data?.total.toFixed(2)}
+                  ${totalPrice.toFixed(2)}
                 </h3>
               </div>
               <button className="blue-button w-full text-primary-foreground font-semibold text-sm tracking-wider hover:opacity-90 transition-opacity">

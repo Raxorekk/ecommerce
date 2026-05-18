@@ -2,7 +2,7 @@
 import ProductImage from "./ProductImage";
 import { Trash2 } from "lucide-react";
 import { Cart } from "@/types/api";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
 import { deleteCartItem, updateCartItemQuantity } from "@/app/actions/cart";
@@ -10,13 +10,17 @@ import { deleteCartItem, updateCartItemQuantity } from "@/app/actions/cart";
 const CartItem = ({
   item,
   onUpdate,
+  setTotalCartPrice,
+  setCartItemQuantity,
 }: {
-  item: Cart["items"][0];
+  item: Cart["items"][number];
   onUpdate: () => void;
+  setTotalCartPrice: Dispatch<SetStateAction<number>>;
+  setCartItemQuantity: Dispatch<SetStateAction<number>>;
 }) => {
   const [quantity, setQuantity] = useState(item.quantity);
-  const [totalPrice, setTotalPrice] = useState(
-    item.quantity * item.product.price,
+  const [totalProductPrice, setTotalProductPrice] = useState(
+    item.quantity * Number(item.product.price),
   );
 
   const debounced = useDebouncedCallback(async () => {
@@ -68,8 +72,11 @@ const CartItem = ({
                   handleDeleteCartItem(item.id);
                   onUpdate();
                 } else {
-                  setQuantity((prev) => prev - 1);
-                  setTotalPrice((quantity - 1) * item.product.price);
+                  setQuantity(prev => prev - 1);
+                  setCartItemQuantity(prev => prev - 1)
+                  setTotalProductPrice((quantity - 1) * Number(item.product.price));
+                  setTotalCartPrice(prev => prev - Number(item.product.price));
+                  
                   debounced();
                 }
               }}
@@ -82,8 +89,10 @@ const CartItem = ({
             </p>
             <button
               onClick={() => {
-                setQuantity((prev) => prev + 1);
-                setTotalPrice((quantity + 1) * item.product.price);
+                setQuantity(prev => prev + 1);
+                setCartItemQuantity(prev => prev + 1)
+                setTotalProductPrice((quantity + 1) * Number(item.product.price));
+                setTotalCartPrice(prev => prev + Number(item.product.price));
                 debounced();
               }}
               className="border-l border-muted-background px-2.5 h-full rounded-r-md cursor-pointer hover:bg-muted transition-colors"
@@ -92,7 +101,7 @@ const CartItem = ({
             </button>
           </div>
           <div className="flex flex-row self-baseline my-auto items-center gap-3">
-            <h4 className="font-semibold mt-0.5">${totalPrice.toFixed(2)}</h4>
+            <h4 className="font-semibold mt-0.5">${totalProductPrice.toFixed(2)}</h4>
             <button
               onClick={() => {
                 handleDeleteCartItem(item.id);

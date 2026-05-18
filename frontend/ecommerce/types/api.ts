@@ -45,7 +45,7 @@ export type Product = {
 export type LightProduct = {
   id: number;
   name: string;
-  price: number;
+  price: string;
   category: Category;
   slug: string;
   product_img: string;

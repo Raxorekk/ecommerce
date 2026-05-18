@@ -19,7 +19,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = models.Product.objects.select_related("category").prefetch_related("specification_values__specification").all()    
+    queryset = models.Product.objects.select_related("category").prefetch_related("specification_values__specification", "reviews").all()    
     serializer_class = serializers.ProductSerializer
     pagination_class = StandardResultsSetPagination
     lookup_field = "slug"

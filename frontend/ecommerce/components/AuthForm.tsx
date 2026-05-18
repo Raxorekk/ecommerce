@@ -1,12 +1,11 @@
 "use client";
 import { handleAuth } from "@/app/actions/auth";
-
 import { useFormStatus } from "react-dom";
-
 
 interface AuthType {
   authType: "login" | "register";
 }
+
 
 export default function AuthForm({ authType }: AuthType) {
   const actionWithVariant = handleAuth.bind(null, authType);

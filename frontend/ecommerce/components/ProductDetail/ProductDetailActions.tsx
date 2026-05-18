@@ -8,7 +8,6 @@ import { addToCart } from "@/app/actions/cart";
 const ProductDetailActions = ({ product }: { product: Product }) => {
   const handleAddToCart = async () => {
     const response = await addToCart(product.id, 1);
-    console.log(response);
   }
 
   return (

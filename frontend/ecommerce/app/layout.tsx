@@ -29,7 +29,7 @@ export default async function RootLayout({
       lang="en"
     >
       <body className="antialiased">
-        <NavBar categories={res}/>
+        <NavBar categories={res !== null ? res.data : []}/>
         {children}
         <Footer />
         </body>

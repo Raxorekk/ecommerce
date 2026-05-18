@@ -70,6 +70,7 @@ export default function NavBar({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  
   return (
     <nav className="fixed left-0 top-0 right-0 flex z-50 h-16 lg:h-20 bg-background/80 border-b border-muted-background backdrop-blur-md">
       <div className="custom-container inline-padding mx-auto flex flex-row items-center justify-between">
