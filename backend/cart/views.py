@@ -20,8 +20,12 @@ class CartViewSet(ModelViewSet):
         if not item_created:
             item.quantity += 1
             item.save()
+
+        status = 200
+        if cart_created or item_created:
+            status = 201
             
-        return Response(data=serializers.CartSerializer(cart).data, status=200)
+        return Response(data=serializers.CartSerializer(cart).data, status=status)
 
     def get_serializer_class(self):
         if self.action == 'add_to_cart':

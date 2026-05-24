@@ -70,10 +70,10 @@ const page = async ({
   if (!selected_category) notFound();
 
   return (
-    <div className="bg-background min-h-screen nav-margin">
+    <div className="bg-background min-h-screen nav-margin mb-12">
       <div className="custom-container inline-padding mx-auto">
         <div className="flex flex-col">
-          <div className="flex flex-row items-center text-xs gap-2 mb-6">
+          <div className="flex flex-row items-center text-sm gap-2 mb-6">
             <Link
               href="/"
               className="text-muted-foreground hover:text-light-blue transition-colors"
@@ -89,7 +89,7 @@ const page = async ({
             categories={categories !== undefined ? categories : []}
             selected_category={selected_category}
           />
-          <div className="flex-row w-full justify-between md:flex hidden">
+          <div className="flex-row w-full mb-8 justify-between md:flex hidden">
             <div className="flex flex-col">
               <h1 className="text-3xl lg:text-5xl font-bold mb-2">
                 {selected_category?.name}
@@ -102,7 +102,7 @@ const page = async ({
             <SearchSortButtons />
           </div>
 
-          <div className="md:hidden block">
+          <div className="md:hidden block mb-4">
             <h1 className="text-3xl font-bold mb-2">
               {selected_category?.name}
             </h1>
@@ -110,7 +110,7 @@ const page = async ({
               {products?.count} {products?.count !== 1 ? "products" : "product"}
             </span>
           </div>
-          <div className="md:hidden block">
+          <div className="md:hidden block mb-8">
             <SearchSortButtons />
           </div>
 

@@ -46,7 +46,7 @@ export default function SearchSortButtons() {
   };
 
   return (
-    <div className="flex flex-row mt-4 mb-8 items-center gap-3">
+    <div className="flex flex-row self-end items-center gap-3">
       <div className="relative">
         <Search className="absolute left-5 top-1/2 -translate-1/2 w-4 h-4 text-muted-foreground" />
         <input

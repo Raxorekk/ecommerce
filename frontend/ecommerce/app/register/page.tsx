@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen inline-padding nav-margin animate-fade-in-down [animation-duration:300ms]">
+    <div className="flex flex-col items-center min-h-screen inline-padding mb-18 nav-margin animate-fade-in-down [animation-duration:300ms]">
       <div className="flex flex-col items-center max-w-sm w-full">
         <h1 className="text-3xl font-bold mb-2">Create Account</h1>
         <p className="text-muted-foreground text-sm mb-10 text-center">

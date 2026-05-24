@@ -16,7 +16,7 @@ const PageContent = () => {
 
   const fetchCart = async () => {
     const cartData = await getCartData();
-    setData(cartData);
+    if (cartData) setData(cartData);
   };
 
   useEffect(() => {
@@ -27,10 +27,15 @@ const PageContent = () => {
     if (data) {
       setItemsQuantity(0);
       setTotalPrice(0);
+      let itemsQuantity = 0;
+      let totalPrice = 0;
+
       for (const el of data?.items) {
-        setItemsQuantity((prev) => (prev += el.quantity));
-        setTotalPrice(prev => prev += Number(el.product.price) * el.quantity)
+        itemsQuantity += el.quantity;
+        totalPrice += Number(el.product.price) * el.quantity;
       }
+      setItemsQuantity(itemsQuantity);
+      setTotalPrice(totalPrice);
     }
   }, [data]);
 
@@ -75,7 +80,13 @@ const PageContent = () => {
             <div className="space-y-2">
               {data?.items.map((item) => {
                 return (
-                  <CartItem key={item.id} item={item} onUpdate={fetchCart} setTotalCartPrice={setTotalPrice} setCartItemQuantity={setItemsQuantity} />
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    onUpdate={fetchCart}
+                    setTotalCartPrice={setTotalPrice}
+                    setCartItemQuantity={setItemsQuantity}
+                  />
                 );
               })}
             </div>
@@ -84,7 +95,7 @@ const PageContent = () => {
               <div className="flex flex-row justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Subtotal</span>
                 <span className="text-sm text-foreground font-medium">
-                  ${data?.total.toFixed(2)}
+                  ${totalPrice.toFixed(2)}
                 </span>
               </div>
               <div className="flex flex-row justify-between">
@@ -96,9 +107,7 @@ const PageContent = () => {
               <div className="border border-muted-background mt-4 mb-4"></div>
               <div className="flex flex-row justify-between mb-4 items-baseline">
                 <h4 className="font-bold">Total</h4>
-                <h3 className="text-2xl font-bold">
-                  ${totalPrice.toFixed(2)}
-                </h3>
+                <h3 className="text-2xl font-bold">${totalPrice.toFixed(2)}</h3>
               </div>
               <button className="blue-button w-full text-primary-foreground font-semibold text-sm tracking-wider hover:opacity-90 transition-opacity">
                 CHECKOUT

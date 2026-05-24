@@ -2,10 +2,11 @@
 import ProductImage from "./ProductImage";
 import { Trash2 } from "lucide-react";
 import { Cart } from "@/types/api";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
 import { deleteCartItem, updateCartItemQuantity } from "@/app/actions/cart";
+import { CartContext } from "@/app/context/CartContext";
 
 const CartItem = ({
   item,
@@ -22,14 +23,16 @@ const CartItem = ({
   const [totalProductPrice, setTotalProductPrice] = useState(
     item.quantity * Number(item.product.price),
   );
+  const { cartItemsQuantity, setCartItemsQuantity } = useContext(CartContext)
 
-  const debounced = useDebouncedCallback(async () => {
-    const response = await updateCartItemQuantity(item.id, quantity);
+  const debounced = useDebouncedCallback(async (newQuantity: number) => {
+    const response = await updateCartItemQuantity(item.id, newQuantity);
     onUpdate();
   }, 1000);
 
   const handleDeleteCartItem = async (itemId: Cart["items"][number]["id"]) => {
     const response = await deleteCartItem(itemId);
+    onUpdate();
   };
 
   return (
@@ -70,14 +73,20 @@ const CartItem = ({
               onClick={() => {
                 if (quantity - 1 === 0) {
                   handleDeleteCartItem(item.id);
-                  onUpdate();
+                  setCartItemsQuantity(0);
                 } else {
-                  setQuantity(prev => prev - 1);
-                  setCartItemQuantity(prev => prev - 1)
-                  setTotalProductPrice((quantity - 1) * Number(item.product.price));
-                  setTotalCartPrice(prev => prev - Number(item.product.price));
-                  
-                  debounced();
+                  const newQuantity = quantity - 1;
+                  setQuantity(newQuantity);
+                  setCartItemQuantity(newQuantity);
+                  setCartItemsQuantity(newQuantity);
+                  setTotalProductPrice(
+                    newQuantity * Number(item.product.price),
+                  );
+                  setTotalCartPrice(
+                    (prev) => prev - Number(item.product.price),
+                  );
+
+                  debounced(newQuantity);
                 }
               }}
               className="border-r border-muted-background px-2.5 h-full rounded-l-md cursor-pointer hover:bg-muted transition-colors"
@@ -89,11 +98,15 @@ const CartItem = ({
             </p>
             <button
               onClick={() => {
-                setQuantity(prev => prev + 1);
-                setCartItemQuantity(prev => prev + 1)
-                setTotalProductPrice((quantity + 1) * Number(item.product.price));
-                setTotalCartPrice(prev => prev + Number(item.product.price));
-                debounced();
+                const newQuantity = quantity + 1;
+                setQuantity(newQuantity);
+                setCartItemQuantity(newQuantity);
+                setCartItemsQuantity(newQuantity);
+                setTotalProductPrice(
+                  newQuantity * Number(item.product.price),
+                );
+                setTotalCartPrice((prev) => prev + Number(item.product.price));
+                debounced(newQuantity);
               }}
               className="border-l border-muted-background px-2.5 h-full rounded-r-md cursor-pointer hover:bg-muted transition-colors"
             >
@@ -101,11 +114,13 @@ const CartItem = ({
             </button>
           </div>
           <div className="flex flex-row self-baseline my-auto items-center gap-3">
-            <h4 className="font-semibold mt-0.5">${totalProductPrice.toFixed(2)}</h4>
+            <h4 className="font-semibold mt-0.5">
+              ${totalProductPrice.toFixed(2)}
+            </h4>
             <button
               onClick={() => {
                 handleDeleteCartItem(item.id);
-                onUpdate();
+                setCartItemsQuantity(0);
               }}
               className="group cursor-pointer"
             >

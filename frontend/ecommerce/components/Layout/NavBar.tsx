@@ -1,5 +1,5 @@
 "use client";
-import "../../app/globals.css"
+import "../../app/globals.css";
 import {
   Menu,
   ShoppingBag,
@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Category } from "@/types/api";
+import { Cart, Category } from "@/types/api";
 import { CATEGORIES } from "@/lib/routes";
+import { getCartData } from "@/app/actions/cart";
+import { useContext } from "react";
+import { CartContext } from "@/app/context/CartContext";
 
 function NavBarDropdownButton({
   setShowDropdown,
@@ -50,7 +53,8 @@ export default function NavBar({
   categories: Category[] | null;
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
-
+  const { cartItemsQuantity } = useContext(CartContext)
+  
   useEffect(() => {
     const blockScroll = () => {
       showDropdown
@@ -70,7 +74,8 @@ export default function NavBar({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
+
   return (
     <nav className="fixed left-0 top-0 right-0 flex z-50 h-16 lg:h-20 bg-background/80 border-b border-muted-background backdrop-blur-md">
       <div className="custom-container inline-padding mx-auto flex flex-row items-center justify-between">
@@ -119,12 +124,19 @@ export default function NavBar({
           </Link>
         </div>
         <div className="flex flex-row gap-4 items-center">
-          <button className="hidden md:flex md:visible cursor-pointer flex-row text-sm font-medium items-center text-muted-foreground gap-1 hover:text-light-blue transition-colors">
+          <Link href='/login' className="hidden md:flex md:visible cursor-pointer flex-row text-sm font-medium items-center text-muted-foreground gap-1 hover:text-light-blue transition-colors">
             <User className="h-4 w-4" />
             Account
-          </button>
+          </Link>
           <Link href="/cart" className="cursor-pointer h-5 w-5">
-            <ShoppingBag className="h-5 w-5 hover:text-light-blue transition-colors" />
+            <div className="relative group">
+              <ShoppingBag className="h-5 w-5 group-hover:text-light-blue transition-colors" />
+              {cartItemsQuantity > 0 && (
+                <span className="absolute -top-1 -right-1 text-primary-foreground bg-light-blue rounded-full w-4 h-4 text-[10px] font-semibold flex justify-center">
+                  {cartItemsQuantity}
+                </span>
+              )}
+            </div>
           </Link>
           <button
             onClick={() => setShowDropdown((prev) => !prev)}
@@ -179,7 +191,7 @@ export default function NavBar({
           <div className="h-px bg-muted-background my-2"></div>
           <NavBarDropdownButton
             setShowDropdown={setShowDropdown}
-            href="/"
+            href="/login"
             Icon={User}
             text="Account"
           />

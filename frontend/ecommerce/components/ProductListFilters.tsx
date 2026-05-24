@@ -20,7 +20,7 @@ const ProductListFilters = ({
       {specifications.map((spec) => {
         return (
           <div
-            className="flex flex-col mt-6 text-muted-foreground"
+            className="flex flex-col not-first:mt-6 text-muted-foreground"
             key={spec.name}
           >
             <p className="text-xs tracking-wider font-semibold uppercase mb-3">
