@@ -1,5 +1,5 @@
 export const PROTECTED_ROUTES = [] as string[];
-export const PUBLIC_ROUTES = ["/login", "/register"];
+export const AUTH_ROUTES = ["/login", "/register"];
 
 const CATEGORIES_ROOT = "/products/categories"
 

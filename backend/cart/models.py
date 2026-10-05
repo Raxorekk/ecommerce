@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.db.models import Sum, F
 from django.conf import settings
@@ -7,7 +8,8 @@ from products.models import Product
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='carts')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='carts')
+    session_id = models.UUIDField(null=True)
     is_active = models.BooleanField(default=True)
     
     @property

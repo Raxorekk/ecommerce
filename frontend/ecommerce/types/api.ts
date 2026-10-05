@@ -19,16 +19,16 @@ export type SpecificationValues = {
 export type UserFullName = {
   first_name: string;
   last_name: string;
-}
+};
 
 export type Review = {
   title: string;
   content: string;
-  user: UserFullName
+  user: UserFullName;
   created_at: string;
   rating: number;
   product: number;
-}
+};
 
 export type Product = {
   id: number;
@@ -49,7 +49,7 @@ export type LightProduct = {
   category: Category;
   slug: string;
   product_img: string;
-}
+};
 
 export type Cart = {
   user: number;
@@ -61,4 +61,14 @@ export type Cart = {
     product: LightProduct;
     quantity: number;
   }[];
-}
+};
+
+export type ApiResponse<T> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      status: number;
+    };

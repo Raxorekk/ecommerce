@@ -23,7 +23,7 @@ const CartItem = ({
   const [totalProductPrice, setTotalProductPrice] = useState(
     item.quantity * Number(item.product.price),
   );
-  const { cartItemsQuantity, setCartItemsQuantity } = useContext(CartContext)
+  const { cartItemsQuantity, setCartItemsQuantity } = useContext(CartContext);
 
   const debounced = useDebouncedCallback(async (newQuantity: number) => {
     const response = await updateCartItemQuantity(item.id, newQuantity);
@@ -102,9 +102,7 @@ const CartItem = ({
                 setQuantity(newQuantity);
                 setCartItemQuantity(newQuantity);
                 setCartItemsQuantity(newQuantity);
-                setTotalProductPrice(
-                  newQuantity * Number(item.product.price),
-                );
+                setTotalProductPrice(newQuantity * Number(item.product.price));
                 setTotalCartPrice((prev) => prev + Number(item.product.price));
                 debounced(newQuantity);
               }}

@@ -22,7 +22,8 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Cart
-        fields = ['user', 'is_active', 'total', 'items']
+        fields = ['user', 'is_active', 'session_id', 'total', 'items']
+        read_only_fields = ['user', 'is_active', 'session_id']
     
     def get_items(self, obj):
         return CartItemSerializer(

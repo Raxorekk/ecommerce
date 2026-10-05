@@ -3,41 +3,34 @@ import "../globals.css";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
-import { Cart } from "@/types/api";
+import { Cart, ApiResponse } from "@/types/api";
 import { getCartData } from "../actions/cart";
 import Link from "next/link";
 import CartItem from "@/components/CartItem";
+import { useContext } from "react";
+import { CartContext } from "@/app/context/CartContext";
 
 const PageContent = () => {
   const router = useRouter();
-  const [data, setData] = useState<Cart | null>(null);
   const [itemsQuantity, setItemsQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-
-  const fetchCart = async () => {
-    const cartData = await getCartData();
-    if (cartData) setData(cartData);
-  };
+  const { cartData, cartItemsQuantity, handleFetchCartData } = useContext(CartContext)
 
   useEffect(() => {
-    fetchCart();
-  }, []);
-
-  useEffect(() => {
-    if (data) {
+    if (cartData) {
       setItemsQuantity(0);
       setTotalPrice(0);
       let itemsQuantity = 0;
       let totalPrice = 0;
 
-      for (const el of data?.items) {
+      for (const el of cartData?.items) {
         itemsQuantity += el.quantity;
         totalPrice += Number(el.product.price) * el.quantity;
       }
       setItemsQuantity(itemsQuantity);
       setTotalPrice(totalPrice);
     }
-  }, [data]);
+  }, [cartData]);
 
   return (
     <div className="bg-background nav-margin mb-10 lg:mb-16">
@@ -59,7 +52,7 @@ const PageContent = () => {
             : `${itemsQuantity} item`}{" "}
           in your cart
         </p>
-        {data?.items.length === 0 ? (
+        {cartData?.items.length === 0 ? (
           <div className="flex flex-col w-full card bg-card/40 rounded-2xl items-center justify-center py-20 px-6">
             <div className="bg-muted/40 p-4 rounded-full mb-4">
               <ShoppingBag className="h-7 w-7 text-muted-foreground" />
@@ -78,12 +71,12 @@ const PageContent = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
             <div className="space-y-2">
-              {data?.items.map((item) => {
+              {cartData?.items.map((item) => {
                 return (
                   <CartItem
                     key={item.id}
                     item={item}
-                    onUpdate={fetchCart}
+                    onUpdate={handleFetchCartData}
                     setTotalCartPrice={setTotalPrice}
                     setCartItemQuantity={setItemsQuantity}
                   />
