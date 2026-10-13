@@ -39,7 +39,6 @@ const CartItem = ({
   };
 
   useEffect(() => {
-    console.log("cos");
     setQuantity(item.quantity);
     setTotalProductPrice(item.quantity * Number(item.product.price));
   }, [item.quantity]);

@@ -43,7 +43,7 @@ export function PageContent({ product }: { product: Product }) {
   product.reviews.forEach((review) => {
     ratingSum += review.rating;
   });
-  const avgRating = Math.ceil((ratingSum / product.reviews.length) * 10) / 10;
+  const avgRating = ratingSum > 0 ? (Math.ceil((ratingSum / product.reviews.length) * 10) / 10) : 0;
 
   return (
     <>
@@ -64,7 +64,7 @@ export function PageContent({ product }: { product: Product }) {
           <div className="mb-6 flex flex-row items-center gap-2">
             <ProductStarRating rating={avgRating} starsSize="4" />
             <p className="text-sm text-muted-foreground">
-              {avgRating} ({product.reviews.length}{" "}
+              {avgRating > 0 ? avgRating : ""} ({product.reviews.length}{" "}
               {product.reviews.length !== 1 ? "reviews" : "review"})
             </p>
           </div>

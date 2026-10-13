@@ -15,14 +15,15 @@ const ProductDetailReviews = ({
   reviews.forEach((review) => {
     ratingSum += review.rating;
   });
-  const avgRating = Math.ceil((ratingSum / reviews.length) * 10) / 10;
+
+  const avgRating =  ratingSum > 0 ? (Math.ceil((ratingSum / reviews.length) * 10) / 10) : 0;
   const ratingBars = [] as ReactNode[];
 
   for (let i = 5; i >= 1; i--) {
     const distinctRatingsCount = reviews.filter(
       (review) => review.rating === i,
     ).length;
-    const barWidth = ((distinctRatingsCount / reviews.length) * 100).toFixed(0);
+    const barWidth = distinctRatingsCount > 0 ? ((distinctRatingsCount / reviews.length) * 100).toFixed(0) : 0;
 
     ratingBars.push(
       <div

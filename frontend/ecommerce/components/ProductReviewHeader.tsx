@@ -38,7 +38,7 @@ const ProductReviewHeader = ({
       <div className="flex flex-col md:grid md:items-center grid-cols-3 gap-8 mb-10">
         <div className="flex flex-col justify-center items-center">
           <span className="text-5xl font-space font-bold mb-2">
-            {avgRating}
+            {avgRating > 0 ? avgRating : "No reviews"}
           </span>
           <ProductStarRating rating={avgRating} starsSize="4" />
           <p className="mt-1 text-muted-foreground text-sm">

@@ -26,3 +26,5 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name="cart_item")
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
+    class Meta:
+        ordering = ['id']
