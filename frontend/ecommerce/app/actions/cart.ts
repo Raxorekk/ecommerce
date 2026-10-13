@@ -1,17 +1,12 @@
 "use server";
 import { apiFetch } from "@/lib/api";
 import { ApiResponse, Cart, Product } from "@/types/api";
-import { updateTag } from "next/cache";
 import { ApiError } from "@/lib/api";
 
 export async function getCartData(): Promise<ApiResponse<Cart> | undefined> {
   try {
     const response = await apiFetch<Cart[]>("api/cart/", {
       method: "GET",
-      next: {
-        tags: ["cart"],
-        revalidate: 3600,
-      },
     });
     if (Array.isArray(response?.data) && response?.data.length > 0) {
       return { success: true, data: response?.data[0] };
@@ -30,8 +25,8 @@ export async function addToCart(product: Product["id"], quantity: number) {
       product,
       quantity,
     }),
+    credentials: 'include'
   });
-  updateTag("cart");
   return response;
 }
 
@@ -39,7 +34,6 @@ export async function deleteCartItem(itemId: Cart["items"][number]["id"]) {
   const response = await apiFetch<null>(`api/cart-items/${itemId}/`, {
     method: "DELETE",
   });
-  updateTag("cart");
   return response;
 }
 
@@ -53,6 +47,5 @@ export async function updateCartItemQuantity(
       quantity: itemQuantity,
     }),
   });
-  updateTag("cart");
   return response;
 }

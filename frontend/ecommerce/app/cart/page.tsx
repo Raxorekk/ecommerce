@@ -12,26 +12,12 @@ import { CartContext } from "@/app/context/CartContext";
 
 const PageContent = () => {
   const router = useRouter();
-  const [itemsQuantity, setItemsQuantity] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const { cartData, cartItemsQuantity, handleFetchCartData } = useContext(CartContext)
-
+  const { cartData, cartItemsCount, handleFetchCartData } = useContext(CartContext)
+  
   useEffect(() => {
-    if (cartData) {
-      setItemsQuantity(0);
-      setTotalPrice(0);
-      let itemsQuantity = 0;
-      let totalPrice = 0;
-
-      for (const el of cartData?.items) {
-        itemsQuantity += el.quantity;
-        totalPrice += Number(el.product.price) * el.quantity;
-      }
-      setItemsQuantity(itemsQuantity);
-      setTotalPrice(totalPrice);
-    }
-  }, [cartData]);
-
+    handleFetchCartData();
+  }, [])
+  
   return (
     <div className="bg-background nav-margin mb-10 lg:mb-16">
       <div className="custom-container mx-auto inline-padding">
@@ -47,9 +33,9 @@ const PageContent = () => {
           <h1 className="font-semibold text-3xl lg:text-4xl">Your Cart</h1>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          {itemsQuantity && itemsQuantity !== 1
-            ? `${itemsQuantity} items`
-            : `${itemsQuantity} item`}{" "}
+          {cartItemsCount && cartItemsCount !== 1
+            ? `${cartItemsCount} items`
+            : `${cartItemsCount} item`}{" "}
           in your cart
         </p>
         {cartData?.items.length === 0 ? (
@@ -72,13 +58,12 @@ const PageContent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
             <div className="space-y-2">
               {cartData?.items.map((item) => {
+                //console.log(`Item.quantity w stronie carta: ${item.quantity}`)
                 return (
                   <CartItem
                     key={item.id}
                     item={item}
                     onUpdate={handleFetchCartData}
-                    setTotalCartPrice={setTotalPrice}
-                    setCartItemQuantity={setItemsQuantity}
                   />
                 );
               })}
@@ -88,7 +73,7 @@ const PageContent = () => {
               <div className="flex flex-row justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Subtotal</span>
                 <span className="text-sm text-foreground font-medium">
-                  ${totalPrice.toFixed(2)}
+                  {cartData && `$${cartData.total.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex flex-row justify-between">
@@ -100,7 +85,7 @@ const PageContent = () => {
               <div className="border border-muted-background mt-4 mb-4"></div>
               <div className="flex flex-row justify-between mb-4 items-baseline">
                 <h4 className="font-bold">Total</h4>
-                <h3 className="text-2xl font-bold">${totalPrice.toFixed(2)}</h3>
+                <h3 className="text-2xl font-bold">{cartData && `$${cartData.total.toFixed(2)}`}</h3>
               </div>
               <button className="blue-button w-full text-primary-foreground font-semibold text-sm tracking-wider hover:opacity-90 transition-opacity">
                 CHECKOUT

@@ -2,7 +2,13 @@
 import ProductImage from "./ProductImage";
 import { Trash2 } from "lucide-react";
 import { Cart } from "@/types/api";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
 import { deleteCartItem, updateCartItemQuantity } from "@/app/actions/cart";
@@ -11,19 +17,16 @@ import { CartContext } from "@/app/context/CartContext";
 const CartItem = ({
   item,
   onUpdate,
-  setTotalCartPrice,
-  setCartItemQuantity,
 }: {
   item: Cart["items"][number];
   onUpdate: () => void;
-  setTotalCartPrice: Dispatch<SetStateAction<number>>;
-  setCartItemQuantity: Dispatch<SetStateAction<number>>;
 }) => {
   const [quantity, setQuantity] = useState(item.quantity);
   const [totalProductPrice, setTotalProductPrice] = useState(
     item.quantity * Number(item.product.price),
   );
-  const { cartItemsQuantity, setCartItemsQuantity } = useContext(CartContext);
+  const { cartData, cartItemsCount, setCartItemsCount } =
+    useContext(CartContext);
 
   const debounced = useDebouncedCallback(async (newQuantity: number) => {
     const response = await updateCartItemQuantity(item.id, newQuantity);
@@ -35,6 +38,13 @@ const CartItem = ({
     onUpdate();
   };
 
+  useEffect(() => {
+    console.log("cos");
+    setQuantity(item.quantity);
+    setTotalProductPrice(item.quantity * Number(item.product.price));
+  }, [item.quantity]);
+
+  //console.log(`Quantity w CartItem: ${quantity}`)
   return (
     <div key={item.id} className="flex flex-row p-4 card bg-card/40 gap-4">
       <div>
@@ -71,23 +81,18 @@ const CartItem = ({
           <div className="flex flex-row text-foreground h-8.5 self-start border items-center border-muted rounded-md bg-card text-sm font-medium">
             <button
               onClick={() => {
-                if (quantity - 1 === 0) {
+                if (quantity - 1 <= 0) {
                   handleDeleteCartItem(item.id);
-                  setCartItemsQuantity(0);
                 } else {
                   const newQuantity = quantity - 1;
                   setQuantity(newQuantity);
-                  setCartItemQuantity(newQuantity);
-                  setCartItemsQuantity(newQuantity);
                   setTotalProductPrice(
                     newQuantity * Number(item.product.price),
-                  );
-                  setTotalCartPrice(
-                    (prev) => prev - Number(item.product.price),
                   );
 
                   debounced(newQuantity);
                 }
+                setCartItemsCount(cartItemsCount - 1);
               }}
               className="border-r border-muted-background px-2.5 h-full rounded-l-md cursor-pointer hover:bg-muted transition-colors"
             >
@@ -100,11 +105,9 @@ const CartItem = ({
               onClick={() => {
                 const newQuantity = quantity + 1;
                 setQuantity(newQuantity);
-                setCartItemQuantity(newQuantity);
-                setCartItemsQuantity(newQuantity);
                 setTotalProductPrice(newQuantity * Number(item.product.price));
-                setTotalCartPrice((prev) => prev + Number(item.product.price));
                 debounced(newQuantity);
+                setCartItemsCount(cartItemsCount + 1);
               }}
               className="border-l border-muted-background px-2.5 h-full rounded-r-md cursor-pointer hover:bg-muted transition-colors"
             >
@@ -118,7 +121,7 @@ const CartItem = ({
             <button
               onClick={() => {
                 handleDeleteCartItem(item.id);
-                setCartItemsQuantity(0);
+                setCartItemsCount(cartItemsCount - quantity);
               }}
               className="group cursor-pointer"
             >

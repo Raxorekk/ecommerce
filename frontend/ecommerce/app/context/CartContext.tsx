@@ -6,28 +6,28 @@ import { Cart } from "@/types/api";
 
 export const CartContext = createContext<{
   cartData: Cart | null
-  cartItemsQuantity: number;
-  setCartItemsQuantity: React.Dispatch<React.SetStateAction<number>>;
+  cartItemsCount: number;
+  setCartItemsCount: React.Dispatch<React.SetStateAction<number>>;
   handleFetchCartData: () => void
-}>({ cartData: null, cartItemsQuantity: 0, setCartItemsQuantity: () => {}, handleFetchCartData: () => {} });
+}>({ cartData: null, cartItemsCount: 0, setCartItemsCount: () => {}, handleFetchCartData: () => {} });
 
 export default function CartProvider({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [cartItemsQuantity, setCartItemsQuantity] = useState(0);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   const [cartData, setCartData] = useState<Cart | null>(null);
 
   const handleFetchCartData = async () => {
     const response = await getCartData();
     if (response?.success) {
-      let cartItemsQuantity = 0;
+      let cartItemsCount = 0;
       for (const item of response.data.items) {
-        cartItemsQuantity += item.quantity;
+        cartItemsCount += item.quantity;
       }
       setCartData(response.data)
-      setCartItemsQuantity(cartItemsQuantity);
+      setCartItemsCount(cartItemsCount);
     }
   };
 
@@ -36,7 +36,7 @@ export default function CartProvider({
   }, []);
 
   return (
-    <CartContext value={{ cartData, cartItemsQuantity, setCartItemsQuantity, handleFetchCartData }}>
+    <CartContext value={{ cartData, cartItemsCount, setCartItemsCount, handleFetchCartData }}>
       {children}
     </CartContext>
   );

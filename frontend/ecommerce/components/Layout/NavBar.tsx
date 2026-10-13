@@ -53,7 +53,7 @@ export default function NavBar({
   categories: Category[] | null;
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const { cartItemsQuantity } = useContext(CartContext)
+  const { cartItemsCount } = useContext(CartContext)
   
   useEffect(() => {
     const blockScroll = () => {
@@ -131,9 +131,9 @@ export default function NavBar({
           <Link href="/cart" className="cursor-pointer h-5 w-5">
             <div className="relative group">
               <ShoppingBag className="h-5 w-5 group-hover:text-light-blue transition-colors" />
-              {cartItemsQuantity > 0 && (
+              {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 text-primary-foreground bg-light-blue rounded-full w-4 h-4 text-[10px] font-semibold flex justify-center">
-                  {cartItemsQuantity}
+                  {cartItemsCount}
                 </span>
               )}
             </div>

@@ -19,6 +19,7 @@ export async function apiFetch<T>(
 ): Promise<{ status: number; data: T } | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("ACCESS_TOKEN")?.value;
+  const guestCartId = cookieStore.get("GUEST_CART_ID")?.value;
 
   // set token and optional headers
   const headers = new Headers(options.headers);
@@ -29,10 +30,36 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
+  // attach cookies to request
+  if (guestCartId) {
+    headers.set("Cookie", `GUEST_CART_ID=${guestCartId}`);
+  }
+
   const response = await fetch(`${process.env.API_URL}/${endpoint}`, {
     ...options,
     headers,
   });
+
+  // set cookies attached to response from backend
+  const cookieHeader = response.headers.get("set-cookie");
+  if (cookieHeader) {
+    const match = cookieHeader.match(/GUEST_CART_ID=([^;]+)/);
+    
+    if (match && match[1]) {
+      // delete cookies if response sent blank GUEST_CART_ID value
+      if (match[1] === `""`) {
+        cookieStore.delete("GUEST_CART_ID");
+      } else {
+        cookieStore.set("GUEST_CART_ID", match[1], {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24,
+          path: "/",
+        });
+      }
+    }
+  }
 
   if (!response.ok) {
     // clear token if unauthorized in case of invalid accessToken

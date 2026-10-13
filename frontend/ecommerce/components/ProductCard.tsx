@@ -11,10 +11,13 @@ import { useContext } from "react";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const pathname = usePathname();
-  const {cartItemsQuantity, setCartItemsQuantity} = useContext(CartContext);
+  const {cartItemsCount, setCartItemsCount} = useContext(CartContext);
 
   const handleAddToCart = async () => {
     const response = await addToCart(product.id, 1);
+    if (response?.status === 200 || response?.status === 201) {
+      setCartItemsCount(cartItemsCount + 1);
+    }
   }
 
   return (
@@ -33,7 +36,6 @@ const ProductCard = ({ product }: { product: Product }) => {
             e.stopPropagation();
             e.preventDefault();
             handleAddToCart();
-            setCartItemsQuantity(cartItemsQuantity + 1);
           }}
           className="absolute bottom-3 right-3 flex flex-row gap-1 px-3 py-2 blue-button tracking-wider text-primary-foreground font-semibold text-xs items-center"
         >
