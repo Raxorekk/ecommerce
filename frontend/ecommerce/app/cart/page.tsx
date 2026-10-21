@@ -13,13 +13,11 @@ import { CartContext } from "@/app/context/CartContext";
 const PageContent = () => {
   const router = useRouter();
   const { cartData, cartItemsCount, handleFetchCartData } = useContext(CartContext)
-
   
   useEffect(() => {
     handleFetchCartData();
   }, [])
   
-  console.log(cartData)
   return (
     <div className="bg-background nav-margin mb-10 lg:mb-16">
       <div className="custom-container mx-auto inline-padding">

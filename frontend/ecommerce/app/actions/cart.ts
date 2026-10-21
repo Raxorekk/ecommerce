@@ -18,11 +18,11 @@ export async function getCartData(): Promise<ApiResponse<Cart> | undefined> {
   }
 }
 
-export async function addToCart(product: Product["id"], quantity: number) {
+export async function addToCart(product_id: Product["id"], quantity: number) {
   const response = await apiFetch<Cart>("api/cart/add/", {
     method: "POST",
     body: JSON.stringify({
-      product,
+      product_id,
       quantity,
     }),
     credentials: 'include'

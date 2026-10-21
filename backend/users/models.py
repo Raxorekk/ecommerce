@@ -32,6 +32,7 @@ class CustomUserManager(BaseUserManager):
         
         return user
 
+
 class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=False)
     last_name = models.CharField(max_length=150, blank=False)
@@ -57,10 +58,19 @@ class UserAddress(models.Model):
     country = CountryField(blank=False, null=False)
     address_line1 = models.CharField(max_length=150, blank=False, null=False)
     postal_code = models.CharField(max_length=20, blank=False, null=False)
-    is_default = models.BooleanField(default=True)
+    is_default = models.BooleanField()
     
-    def save(self, *args, **kwargs):
-        if self.is_default:
-            UserAddress.objects.filter(user=self.user).exclude(pk=self.pk).update(is_default=False)
-            
-        super().save(*args, **kwargs)
+    def make_default(self):
+        UserAddress.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
+        
+        self.is_default = True
+        self.save(update_fields=['is_default'])
+     
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'is_default'],
+                condition=models.Q(is_default=True),
+                name='unique_default_address'
+            )
+        ]

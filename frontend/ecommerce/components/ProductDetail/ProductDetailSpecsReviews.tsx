@@ -12,7 +12,7 @@ const ProductDetailSpecsReviews = ({
   specs: Product["specification_values"];
   reviews: Review[];
 }) => {
-  const [showSpecifications, setShowSpecifications] = useState(false);
+  const [showSpecifications, setShowSpecifications] = useState(true);
   const [reviewsToDisplay, setReviewsToDisplay] = useState(reviews);
   const reviewsLeftToDisplay = reviews.length - reviewsToDisplay.length;
 

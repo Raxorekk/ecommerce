@@ -43,20 +43,8 @@ class UserAddressSerializer(serializers.ModelSerializer):
             "postal_code",
             "is_default",
         ]
-        read_only_fields = ['user']
-        
-    def create(self, validated_data):
-        user = self.context.get("user")
-        is_default = validated_data.pop("is_default", True)
-        existing_addresses = models.UserAddress.objects.filter(user=user).exists()
-        
-        if not existing_addresses:
-            is_default = True
-        if user:
-            address = models.UserAddress.objects.create(user=user, is_default=is_default, **validated_data)
-                
-        return address
-        
+        read_only_fields = ['user', 'is_default']
+
         
 class AdminMeUserSerializer(serializers.ModelSerializer):
     addresses = UserAddressSerializer(many=True, read_only=True)

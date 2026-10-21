@@ -44,7 +44,7 @@ export async function apiFetch<T>(
   const cookieHeader = response.headers.get("set-cookie");
   if (cookieHeader) {
     const match = cookieHeader.match(/GUEST_CART_ID=([^;]+)/);
-    
+
     if (match && match[1]) {
       // delete cookies if response sent blank GUEST_CART_ID value
       if (match[1] === `""`) {
@@ -54,7 +54,7 @@ export async function apiFetch<T>(
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
-          maxAge: 60 * 60 * 24,
+          maxAge: 60 * 60 * 24 * 30,
           path: "/",
         });
       }

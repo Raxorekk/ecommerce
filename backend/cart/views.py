@@ -17,6 +17,9 @@ class CartViewSet(ModelViewSet):
         }
         item_quantity = int(request.data.get('quantity', 1))
         
+        if item_quantity <= 0:
+            return Response({"error": 'Quantity must be greater than 0'}, status=400)
+        
         if request.user.is_authenticated:
             merge_user_guest_carts(request)
             filters['user'] = request.user
@@ -29,7 +32,7 @@ class CartViewSet(ModelViewSet):
         cart, cart_created = models.Cart.objects.get_or_create(**filters)
         item, item_created = models.CartItem.objects.get_or_create(
             cart=cart, 
-            product_id=request.data.get('product'), 
+            product_id=request.data.get('product_id'), 
             defaults={'quantity': item_quantity}
         )
         
@@ -44,11 +47,9 @@ class CartViewSet(ModelViewSet):
         response = Response(data=serializers.CartSerializer(cart).data, status=status)
         
         if not request.user.is_authenticated and not cart_id:
-            print(f'{response.cookies} test 1')
-            response.set_cookie('GUEST_CART_ID', cart.session_id, httponly=True, samesite='lax', max_age=60*60*24)
+            response.set_cookie('GUEST_CART_ID', cart.session_id, httponly=True, samesite='lax', max_age=60*60*24*30)
         
         if request.user.is_authenticated and cart_id:
-            print(f'{response.cookies} test 2')
             response.delete_cookie('GUEST_CART_ID')
         
         return response
@@ -59,7 +60,9 @@ class CartViewSet(ModelViewSet):
         return serializers.CartSerializer
     
     def get_queryset(self):
-        filters = {}
+        filters = {
+            'is_active': True
+        }
         
         if self.request.user.is_authenticated:
             filters['user'] = self.request.user
@@ -121,7 +124,7 @@ class CartItemViewSet(ModelViewSet):
         
         if request.user.is_authenticated and request.COOKIES.get("GUEST_CART_ID"):
             response.delete_cookie("GUEST_CART_ID")
-        
+    
         return response
         
     def get_queryset(self):

@@ -11,6 +11,7 @@ class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='carts')
     session_id = models.UUIDField(null=True)
     is_active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     @property
     def total(self):
