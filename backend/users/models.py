@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
@@ -61,11 +61,12 @@ class UserAddress(models.Model):
     is_default = models.BooleanField()
     
     def make_default(self):
-        UserAddress.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
+        with transaction.atomic:
+            UserAddress.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
+            
+            self.is_default = True
+            self.save(update_fields=['is_default'])
         
-        self.is_default = True
-        self.save(update_fields=['is_default'])
-     
     class Meta:
         constraints = [
             models.UniqueConstraint(

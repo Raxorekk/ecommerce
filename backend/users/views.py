@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db import transaction
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
@@ -44,12 +45,13 @@ class UserAddressViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         owner = instance.user
         was_default = instance.is_default
-        instance.delete()
+        with transaction.atomic:
+            instance.delete()
 
-        if was_default:
-            new_default_address = models.UserAddress.objects.filter(user=owner).order_by('-id').first()
-            if new_default_address:
-                new_default_address.make_default()
-        
+            if was_default:
+                new_default_address = models.UserAddress.objects.filter(user=owner).order_by('-id').first()
+                if new_default_address:
+                    new_default_address.make_default()
+            
     def get_queryset(self):
         return models.UserAddress.objects.filter(user=self.request.user)
