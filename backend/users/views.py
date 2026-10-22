@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.db import transaction
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -30,7 +29,9 @@ class UserAddressViewSet(ModelViewSet):
     @action(detail=True, methods=['post'], url_path='set-default')
     def set_default(self, request, pk=None):
         address = self.get_object()
-        address.make_default()
+
+        if not address.is_default:
+            address.make_default()
         
         serializer = self.get_serializer(instance=address)
 
@@ -45,7 +46,7 @@ class UserAddressViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         owner = instance.user
         was_default = instance.is_default
-        with transaction.atomic:
+        with transaction.atomic():
             instance.delete()
 
             if was_default:
@@ -54,4 +55,4 @@ class UserAddressViewSet(ModelViewSet):
                     new_default_address.make_default()
             
     def get_queryset(self):
-        return models.UserAddress.objects.filter(user=self.request.user)
+        return models.UserAddress.objects.filter(user=self.request.user).order_by('id')

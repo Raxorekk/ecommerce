@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from users.mixins import PasswordValidationMixin
 from users import models
+from django_countries.serializer_fields import CountryField
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -32,10 +33,12 @@ class UserCreateSerializer(PasswordValidationMixin, serializers.ModelSerializer)
     
 
 class UserAddressSerializer(serializers.ModelSerializer):
+    country = CountryField(country_dict=True)
+    
     class Meta:
         model = models.UserAddress
         fields = [
-            'id',
+            "id",
             "user",
             "city",
             "country",

@@ -46,7 +46,16 @@ class User(AbstractUser):
     objects = CustomUserManager()
     
     
-class UserAddress(models.Model):
+class Address(models.Model):
+    city = models.CharField(max_length=50, blank=False, null=False)
+    country = CountryField(blank=False, null=False)
+    address_line1 = models.CharField(max_length=150, blank=False, null=False)
+    postal_code = models.CharField(max_length=20, blank=False, null=False)    
+    
+    class Meta:
+        abstract = True
+    
+class UserAddress(Address):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -54,14 +63,10 @@ class UserAddress(models.Model):
         null=True,
         blank=True
     )
-    city = models.CharField(max_length=50, blank=False, null=False)
-    country = CountryField(blank=False, null=False)
-    address_line1 = models.CharField(max_length=150, blank=False, null=False)
-    postal_code = models.CharField(max_length=20, blank=False, null=False)
     is_default = models.BooleanField()
     
     def make_default(self):
-        with transaction.atomic:
+        with transaction.atomic():
             UserAddress.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
             
             self.is_default = True
