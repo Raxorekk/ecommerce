@@ -1,49 +1,96 @@
 "use client";
 import ProductImage from "./ProductImage";
-import { Trash2 } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { Cart } from "@/types/api";
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
-import { useDebouncedCallback } from "use-debounce";
 import { deleteCartItem, updateCartItemQuantity } from "@/app/actions/cart";
 import { CartContext } from "@/app/context/CartContext";
+
+// The dropdown offers 1..LIST_MAX_QUANTITY, bigger quantities are typed in after choosing "10+"
+const LIST_MAX_QUANTITY = 9;
+const MAX_QUANTITY = 99;
+const CUSTOM_OPTION = "custom";
+
+const listOptions = Array.from(
+  { length: LIST_MAX_QUANTITY },
+  (_, index) => index + 1,
+);
+
+const quantityControlClassName =
+  "h-8.5 rounded-md border border-muted bg-card text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-light-blue";
 
 const CartItem = ({
   item,
   onUpdate,
 }: {
   item: Cart["items"][number];
-  onUpdate: () => void;
+  onUpdate: () => void | Promise<void>;
 }) => {
-  const [quantity, setQuantity] = useState(item.quantity);
-  const [totalProductPrice, setTotalProductPrice] = useState(
-    item.quantity * Number(item.product.price),
-  );
-  const { cartData, cartItemsCount, setCartItemsCount } =
-    useContext(CartContext);
+  // Set right after the user picks a quantity so the UI reacts before the server answers
+  const [pendingQuantity, setPendingQuantity] = useState<number | null>(null);
+  // "10+" was chosen, so the text field takes the place of the dropdown
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  // what the user is typing; null means "show the current quantity"
+  const [customValue, setCustomValue] = useState<string | null>(null);
+  const { cartItemsCount, setCartItemsCount } = useContext(CartContext);
 
-  const debounced = useDebouncedCallback(async (newQuantity: number) => {
-    const response = await updateCartItemQuantity(item.id, newQuantity);
-    onUpdate();
-  }, 1000);
+  const quantity = pendingQuantity ?? item.quantity;
+  const totalProductPrice = quantity * Number(item.product.price);
+  // quantities the dropdown cannot show are edited in the text field instead
+  const showCustomInput = isCustomMode || quantity > LIST_MAX_QUANTITY;
+
+  const changeQuantity = async (newQuantity: number) => {
+    if (newQuantity === quantity) return;
+
+    setCartItemsCount(cartItemsCount + newQuantity - quantity);
+    setPendingQuantity(newQuantity);
+
+    try {
+      await updateCartItemQuantity(item.id, newQuantity);
+    } finally {
+      // refetching also restores the real quantity and navbar count if the update failed
+      await onUpdate();
+      setPendingQuantity(null);
+    }
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === CUSTOM_OPTION) {
+      setIsCustomMode(true);
+      setCustomValue("");
+      return;
+    }
+
+    changeQuantity(Number(e.target.value));
+  };
+
+  const closeCustomInput = () => {
+    setIsCustomMode(false);
+    setCustomValue(null);
+  };
+
+  const applyCustomQuantity = () => {
+    const typed = Number(customValue ?? quantity);
+    const isValid =
+      customValue !== "" &&
+      Number.isInteger(typed) &&
+      typed >= 1 &&
+      typed <= MAX_QUANTITY;
+
+    closeCustomInput();
+
+    // an invalid or empty value just brings back the current quantity
+    if (isValid) {
+      changeQuantity(typed);
+    }
+  };
 
   const handleDeleteCartItem = async (itemId: Cart["items"][number]["id"]) => {
-    const response = await deleteCartItem(itemId);
+    await deleteCartItem(itemId);
     onUpdate();
   };
 
-  useEffect(() => {
-    setQuantity(item.quantity);
-    setTotalProductPrice(item.quantity * Number(item.product.price));
-  }, [item.quantity]);
-
-  //console.log(`Quantity w CartItem: ${quantity}`)
   return (
     <div key={item.id} className="flex flex-row p-4 card bg-card/40 gap-4">
       <div>
@@ -77,42 +124,44 @@ const CartItem = ({
           ${item.product.price} each
         </p>
         <div className="flex flex-row mt-auto justify-between items-baseline">
-          <div className="flex flex-row text-foreground h-8.5 self-start border items-center border-muted rounded-md bg-card text-sm font-medium">
-            <button
-              onClick={() => {
-                if (quantity - 1 <= 0) {
-                  handleDeleteCartItem(item.id);
-                } else {
-                  const newQuantity = quantity - 1;
-                  setQuantity(newQuantity);
-                  setTotalProductPrice(
-                    newQuantity * Number(item.product.price),
-                  );
-
-                  debounced(newQuantity);
-                }
-                setCartItemsCount(cartItemsCount - 1);
+          {showCustomInput ? (
+            <input
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={MAX_QUANTITY}
+              placeholder={`${LIST_MAX_QUANTITY + 1}+`}
+              aria-label={`Type quantity of ${item.product.name}`}
+              value={customValue ?? String(quantity)}
+              onChange={(e) => setCustomValue(e.target.value)}
+              onBlur={applyCustomQuantity}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") applyCustomQuantity();
+                if (e.key === "Escape") closeCustomInput();
               }}
-              className="border-r border-muted-background px-2.5 h-full rounded-l-md cursor-pointer hover:bg-muted transition-colors"
-            >
-              −
-            </button>
-            <p className="px-2.5 self-center w-9 text-center text-xs">
-              {quantity}
-            </p>
-            <button
-              onClick={() => {
-                const newQuantity = quantity + 1;
-                setQuantity(newQuantity);
-                setTotalProductPrice(newQuantity * Number(item.product.price));
-                debounced(newQuantity);
-                setCartItemsCount(cartItemsCount + 1);
-              }}
-              className="border-l border-muted-background px-2.5 h-full rounded-r-md cursor-pointer hover:bg-muted transition-colors"
-            >
-              +
-            </button>
-          </div>
+              autoFocus={isCustomMode}
+              className={`${quantityControlClassName} w-20 self-start px-3`}
+            />
+          ) : (
+            <div className="relative self-start">
+              <select
+                aria-label={`Quantity of ${item.product.name}`}
+                value={quantity}
+                onChange={handleSelectChange}
+                className={`${quantityControlClassName} appearance-none cursor-pointer pl-3 pr-8 transition-colors hover:bg-muted`}
+              >
+                {listOptions.map((option) => (
+                  <option key={option} value={option} className="bg-card">
+                    {option}
+                  </option>
+                ))}
+                <option value={CUSTOM_OPTION} className="bg-card">
+                  {LIST_MAX_QUANTITY + 1}+
+                </option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
+          )}
           <div className="flex flex-row self-baseline my-auto items-center gap-3">
             <h4 className="font-semibold mt-0.5">
               ${totalProductPrice.toFixed(2)}
@@ -122,6 +171,7 @@ const CartItem = ({
                 handleDeleteCartItem(item.id);
                 setCartItemsCount(cartItemsCount - quantity);
               }}
+              aria-label={`Remove ${item.product.name} from cart`}
               className="group cursor-pointer"
             >
               <Trash2 className="w-4 h-4 text-muted-foreground group-hover:text-red-700 transition-colors" />

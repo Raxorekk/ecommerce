@@ -2,9 +2,7 @@
 import "../globals.css";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
-import { Cart, ApiResponse } from "@/types/api";
-import { getCartData } from "../actions/cart";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import CartItem from "@/components/CartItem";
 import { useContext } from "react";
@@ -12,11 +10,12 @@ import { CartContext } from "@/app/context/CartContext";
 
 const PageContent = () => {
   const router = useRouter();
-  const { cartData, cartItemsCount, handleFetchCartData } = useContext(CartContext)
+  const { cartData, isCartLoaded, cartItemsCount, handleFetchCartData } = useContext(CartContext)
+  //console.log(cartData)
   
   useEffect(() => {
     handleFetchCartData();
-  }, [])
+  }, [handleFetchCartData])
   
   return (
     <div className="bg-background nav-margin mb-10 lg:mb-16">
@@ -33,12 +32,12 @@ const PageContent = () => {
           <h1 className="font-semibold text-3xl lg:text-4xl">Your Cart</h1>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          {cartItemsCount && cartItemsCount !== 1
-            ? `${cartItemsCount} items`
-            : `${cartItemsCount} item`}{" "}
-          in your cart
+          {isCartLoaded &&
+            `${cartItemsCount} ${cartItemsCount === 1 ? "item" : "items"} in your cart`}
         </p>
-        {cartData?.items.length === 0 ? (
+        {!isCartLoaded ? (
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        ) : !cartData || cartData.items.length === 0 ? (
           <div className="flex flex-col w-full card bg-card/40 rounded-2xl items-center justify-center py-20 px-6">
             <div className="bg-muted/40 p-4 rounded-full mb-4">
               <ShoppingBag className="h-7 w-7 text-muted-foreground" />
@@ -87,9 +86,12 @@ const PageContent = () => {
                 <h4 className="font-bold">Total</h4>
                 <h3 className="text-2xl font-bold">{cartData && `$${cartData.total.toFixed(2)}`}</h3>
               </div>
-              <button className="blue-button w-full text-primary-foreground font-semibold text-sm tracking-wider hover:opacity-90 transition-opacity">
+              <Link
+                href="/checkout"
+                className="blue-button block w-full text-center text-primary-foreground font-semibold text-sm tracking-wider hover:opacity-90 transition-opacity"
+              >
                 CHECKOUT
-              </button>
+              </Link>
             </div>
           </div>
         )}

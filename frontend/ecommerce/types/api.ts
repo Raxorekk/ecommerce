@@ -63,6 +63,22 @@ export type Cart = {
   }[];
 };
 
+// Entry of the logged-in user's address book (GET users/addresses/).
+export type UserAddress = {
+  id: number;
+  user: number;
+  city: string;
+  country: { code: string; name: string };
+  address_line1: string;
+  postal_code: string;
+  is_default: boolean;
+};
+
+// Response of POST api/orders/create: the Stripe Checkout page the user pays on.
+export type OrderCheckoutResponse = {
+  checkout_url: string;
+};
+
 export type ApiResponse<T> =
   | {
       success: true;
