@@ -20,7 +20,7 @@ class CartViewSet(ModelViewSet):
             return Response({"error": 'Quantity must be greater than 0'}, status=400)
         
         if request.user.is_authenticated:
-            merge_user_guest_carts(request)
+            merge_user_guest_carts(user=request.user, cart_id=cart_id)
             filters['user'] = request.user
         else:
             if not cart_id:
@@ -82,12 +82,13 @@ class CartViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def list(self, request, *args, **kwargs):
+        cart_id = request.COOKIES.get("GUEST_CART_ID")
         if request.user.is_authenticated:
-            merge_user_guest_carts(request)
+            merge_user_guest_carts(user=request.user, cart_id=cart_id)
             
         response = super().list(request, *args, **kwargs)
         
-        if request.user.is_authenticated and request.COOKIES.get("GUEST_CART_ID"):
+        if request.user.is_authenticated and cart_id:
             response.delete_cookie("GUEST_CART_ID")
         
         return response
@@ -105,23 +106,27 @@ class CartItemViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
     
     def partial_update(self, request, *args, **kwargs):
+        cart_id = request.COOKIES.get("GUEST_CART_ID")
+        
         if request.user.is_authenticated:
-            merge_user_guest_carts(request)
+            merge_user_guest_carts(user=request.user, cart_id=cart_id)
             
         response = super().partial_update(request, *args, **kwargs)
         
-        if request.user.is_authenticated and request.COOKIES.get("GUEST_CART_ID"):
+        if request.user.is_authenticated and cart_id:
             response.delete_cookie("GUEST_CART_ID")
         
         return response
 
     def destroy(self, request, *args, **kwargs):
+        cart_id = request.COOKIES.get("GUEST_CART_ID")
+        
         if request.user.is_authenticated:
-            merge_user_guest_carts(request)
+            merge_user_guest_carts(user=request.user, cart_id=cart_id)
             
         response = super().destroy(request, *args, **kwargs)
         
-        if request.user.is_authenticated and request.COOKIES.get("GUEST_CART_ID"):
+        if request.user.is_authenticated and cart_id:
             response.delete_cookie("GUEST_CART_ID")
     
         return response

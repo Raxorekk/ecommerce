@@ -80,3 +80,6 @@ class UserAddress(Address):
                 name='unique_default_address'
             )
         ]
+        
+    def __str__(self):
+        return f'{self.address_line1} {self.city}'

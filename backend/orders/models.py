@@ -22,11 +22,11 @@ class Order(models.Model):
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     email = models.EmailField(blank=False)
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=25, choices=Status, default=Status.PENDING)
-    stripe_payment_id = models.CharField(max_length=200, blank=True, null=True)
+    stripe_payment_id = models.CharField(max_length=200, blank=True, null=True, unique=True)
     currency = models.CharField(max_length=3, choices=Currency, default=Currency.PLN)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     
