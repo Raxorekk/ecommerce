@@ -12,5 +12,10 @@ urlpatterns = [
         views.CreateOrderView.as_view(),
         name="orders-create",
     ),
+    path(
+        "stripe/webhook/",
+        views.StripeWebhookView.as_view(),
+        name='stripe-webhook'
+    ),
     path("", include(router.urls)),
 ]

@@ -7,23 +7,28 @@ from . import models
 
 load_dotenv()
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+STRIPE_ENDPOINT_KEY = os.getenv('STRIPE_ENDPOINT_KEY')
 stripe.api_key = STRIPE_API_KEY
 
-def create_checkout_session(currency, price, quantity, product_name):
-    checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[
+def create_checkout_session(order):
+    line_items = []
+
+    for item in order.items.all():
+        line_items.append(
             {
                 'price_data': {
-                    'currency': currency,
-                    'unit_amount': price,
+                    'currency': order.currency,
+                    'unit_amount': int(item.price * 100),
                     'product_data': {
-                        'name': product_name
+                        'name': item.name
                     }
                 },
-                'quantity': quantity
-            }
-        ],
+                'quantity': item.quantity
+            })
+        
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=line_items,
         mode='payment',
         success_url='http://localhost:3000'
     )
@@ -83,7 +88,23 @@ def create_order(validated_data, cart, user=None):
                 quantity=item.quantity
                 )
         
-        cart.is_active = False
-        cart.save(update_fields=['is_active'])
+        #cart.is_active = False
+        #cart.save(update_fields=['is_active'])
             
     return order
+
+
+def webhook(payload, sig):
+    try:
+        event = stripe.Webhook.construct_event(payload=payload, sig_header=sig, secret=STRIPE_ENDPOINT_KEY)
+    except ValueError:
+        raise ValidationError({'payload': 'Invalid payload'})
+    except stripe.SignatureVerificationError:
+        raise ValidationError({'signature': 'Invalid signature'})
+    
+    if event['type'] == 'payment_intent.succeeded':
+        payment_intent = event.get('data', {}).get('object')
+        paid_order_id = payment_intent.get('payment_details', {}).get('order_reference')
+
+        if paid_order_id:
+            models.Order.objects.filter(stripe_payment_id=paid_order_id, status=models.Order.Status.PENDING).update(status=models.Order.Status.PAID)

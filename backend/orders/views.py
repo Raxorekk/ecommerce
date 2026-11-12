@@ -9,7 +9,6 @@ from cart.models import Cart
 
 # Create your views here.
 
-
 class OrderViewSet(ModelViewSet):
     serializer_class = serializers.OrderSerializer
     permission_classes = [IsAuthenticated]
@@ -28,8 +27,11 @@ class OrderViewSet(ModelViewSet):
 class CreateOrderView(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = serializers.OrderSerializer
-    
-    def perform_create(self, serializer):
+          
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
         user = None
         if self.request.user.is_authenticated:
             user = self.request.user
@@ -37,6 +39,27 @@ class CreateOrderView(CreateAPIView):
             
         cart = get_active_cart(self.request)
         order = services.create_order(serializer.validated_data, cart, user)
+        checkout_session = services.create_checkout_session(order)
+        order.stripe_payment_id = checkout_session.id
+        order.save(update_fields=['stripe_payment_id'])
 
         serializer.instance = order
+        data = dict(serializer.data)
+        data['checkout_url'] = checkout_session.url
         
+        headers = self.get_success_headers(serializer.data)
+        
+        return Response(data, status=201, headers=headers)
+
+
+class StripeWebhookView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    
+    def post(self, request):
+        payload = request.body
+        sig = request.META.get('HTTP_STRIPE_SIGNATURE')
+        
+        services.webhook(payload, sig)
+        
+        return Response(status=200)

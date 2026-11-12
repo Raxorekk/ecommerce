@@ -20,11 +20,9 @@ class OrderAddressSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductLightSerializer()
-    
     class Meta:
         model = models.OrderItem
-        fields = ['product', 'quantity']
+        fields = ['quantity', 'price', 'name']
 
 
 class OrderSerializer(serializers.ModelSerializer):
