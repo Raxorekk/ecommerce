@@ -8,6 +8,7 @@ from . import models
 load_dotenv()
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 STRIPE_ENDPOINT_KEY = os.getenv('STRIPE_ENDPOINT_KEY')
+BASE_FRONTEND_URL = os.getenv('BASE_FRONTEND_URL')
 stripe.api_key = STRIPE_API_KEY
 
 def create_checkout_session(order):
@@ -30,7 +31,8 @@ def create_checkout_session(order):
         payment_method_types=['card'],
         line_items=line_items,
         mode='payment',
-        success_url='http://localhost:3000'
+        success_url=BASE_FRONTEND_URL,
+        cancel_url=BASE_FRONTEND_URL
     )
 
     return checkout_session
@@ -88,8 +90,8 @@ def create_order(validated_data, cart, user=None):
                 quantity=item.quantity
                 )
         
-        #cart.is_active = False
-        #cart.save(update_fields=['is_active'])
+        cart.is_active = False
+        cart.save(update_fields=['is_active'])
             
     return order
 
@@ -97,14 +99,21 @@ def create_order(validated_data, cart, user=None):
 def webhook(payload, sig):
     try:
         event = stripe.Webhook.construct_event(payload=payload, sig_header=sig, secret=STRIPE_ENDPOINT_KEY)
-    except ValueError:
+    except ValueError as e:
         raise ValidationError({'payload': 'Invalid payload'})
-    except stripe.SignatureVerificationError:
+    except stripe.SignatureVerificationError as e:
         raise ValidationError({'signature': 'Invalid signature'})
     
+    obj = event.get('data', {}).get('object')
+    status = None
+    paid_order_id = None
+    
     if event['type'] == 'payment_intent.succeeded':
-        payment_intent = event.get('data', {}).get('object')
-        paid_order_id = payment_intent.get('payment_details', {}).get('order_reference')
-
-        if paid_order_id:
-            models.Order.objects.filter(stripe_payment_id=paid_order_id, status=models.Order.Status.PENDING).update(status=models.Order.Status.PAID)
+        paid_order_id = obj.get('payment_details', {}).get('order_reference')
+        status = models.Order.Status.PAID
+    elif event['type'] == 'checkout.session.expired':
+        paid_order_id = obj.get('id')
+        status = models.Order.Status.CANCELLED
+        
+    if status and paid_order_id:
+        models.Order.objects.filter(stripe_payment_id=paid_order_id, status=models.Order.Status.PENDING).update(status=status)

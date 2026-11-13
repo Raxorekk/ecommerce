@@ -1,6 +1,6 @@
 from . import serializers, models, services
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -9,7 +9,7 @@ from cart.models import Cart
 
 # Create your views here.
 
-class OrderViewSet(ModelViewSet):
+class OrderViewSet(ReadOnlyModelViewSet):
     serializer_class = serializers.OrderSerializer
     permission_classes = [IsAuthenticated]
 
